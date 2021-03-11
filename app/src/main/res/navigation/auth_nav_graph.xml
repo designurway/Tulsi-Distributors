@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.auth.fragment.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_forgetPasswordFragment"
+            app:destination="@id/forgetPasswordFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_selfieFragment"
+            app:destination="@id/selfieFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgetPasswordFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.ForgetPasswordFragment"
+        android:label="fragment_forget_password"
+        tools:layout="@layout/fragment_forget_password" >
+        <action
+            android:id="@+id/action_forgetPasswordFragment_to_verifyForgotPassFragment"
+            app:destination="@id/verifyForgotPassFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifyForgotPassFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.VerifyForgotPassFragment"
+        android:label="fragment_verify_forgot_pass"
+        tools:layout="@layout/fragment_verify_forgot_pass" >
+        <action
+            android:id="@+id/action_verifyForgotPassFragment_to_createNewPasswordFragment"
+            app:destination="@id/createNewPasswordFragment" />
+        <argument
+            android:name="phone_number"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/createNewPasswordFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.CreateNewPasswordFragment"
+        android:label="fragment_create_new_password"
+        tools:layout="@layout/fragment_create_new_password" >
+        <argument
+            android:name="phone_number"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_createNewPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selfieFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.auth.fragment.SelfieFragment"
+        android:label="fragment_selfie"
+        tools:layout="@layout/fragment_selfie" />
+</navigation>

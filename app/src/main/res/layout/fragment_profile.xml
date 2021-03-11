@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.home.fragment.ProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImg"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/profile_img"
+            android:layout_marginStart="30dp"
+            app:civ_border_color="@color/black"
+            app:civ_border_width="1dp"
+            android:layout_marginTop="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Emma Clarke"
+            android:fontFamily="@font/pt_sererif_regular"
+            android:textSize="18sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/profileImg"
+            app:layout_constraintTop_toTopOf="@id/profileImg"/>
+
+        <TextView
+            android:id="@+id/mobile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+91666333222"
+            android:fontFamily="@font/pt_sererif_regular"
+            android:textSize="18sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/profileImg"
+            app:layout_constraintTop_toBottomOf="@id/name"/>
+
+        <Button
+            android:id="@+id/editProfileBtn"
+            android:layout_width="65dp"
+            android:layout_height="30dp"
+            android:text="Edit"
+            android:textAllCaps="false"
+            android:layout_marginTop="13dp"
+            android:textColor="@color/white"
+            android:background="@drawable/edit_profile_bg"
+            app:layout_constraintStart_toStartOf="@id/mobile"
+            app:layout_constraintTop_toBottomOf="@+id/mobile"/>
+
+        <TextView
+            android:id="@+id/accountTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Account"
+            android:fontFamily="@font/pt_serif_bold"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profileImg"/>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/changPassLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn"
+            android:padding="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/accountTxt" >
+
+            <ImageView
+                android:id="@+id/passImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/password_ic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/chngPass"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Change Password"
+                android:textSize="16sp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toTopOf="@id/passImg"
+                app:layout_constraintStart_toEndOf="@id/passImg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/passImg" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/supportTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Support"
+            android:fontFamily="@font/pt_serif_bold"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/changPassLayout"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/supportLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn"
+            android:padding="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/supportTxt" >
+
+            <ImageView
+                android:id="@+id/supportImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/support_ic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/suppTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Support"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu_regular"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toTopOf="@id/supportImg"
+                app:layout_constraintStart_toEndOf="@id/supportImg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/supportImg" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/moreTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="More"
+            android:fontFamily="@font/pt_serif_bold"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/supportLayout"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/moreLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/moreTxt" >
+
+            <ImageView
+                android:id="@+id/privacyImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_privacy"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/privacyTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Privacy Policy"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu_regular"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toTopOf="@id/privacyImg"
+                app:layout_constraintStart_toEndOf="@id/privacyImg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/privacyImg" />
+
+            <ImageView
+                android:id="@+id/termsImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/terms_ic"
+                android:layout_marginTop="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/privacyTxt"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/termsTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Terms and Condition"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu_regular"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toTopOf="@id/termsImg"
+                app:layout_constraintStart_toEndOf="@id/termsImg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/termsImg" />
+
+
+            <ImageView
+                android:id="@+id/aboutImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_about"
+                android:layout_marginTop="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/termsTxt"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/aboutTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="About Us"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu_regular"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toTopOf="@id/aboutImg"
+                app:layout_constraintStart_toEndOf="@id/aboutImg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/aboutImg" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>
