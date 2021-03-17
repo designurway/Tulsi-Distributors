@@ -7,11 +7,11 @@
         android:iconTint="@color/black"
         android:icon="@drawable/home"/>
 
-    <item
+ <!--   <item
         android:id="@+id/addProductFragment"
         android:title="Stock List"
         android:iconTint="@color/black"
-        android:icon="@drawable/post_add"/>
+        android:icon="@drawable/post_add"/>-->
 
     <item
         android:id="@+id/notificationFragment"

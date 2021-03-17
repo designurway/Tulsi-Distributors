@@ -1,4 +1,4 @@
-package com.tulsidistributors.tdemployee.ui.home.fragment
+package com.tulsidistributors.tdemployee.ui.home.fragment.setting
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.tulsidistributors.tdemployee.R
 
 
-class AddProductFragment : Fragment() {
+class AboutUsFragment : Fragment() {
 
 
     override fun onCreateView(
@@ -16,7 +16,7 @@ class AddProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_product, container, false)
+        return inflater.inflate(R.layout.fragment_about_us, container, false)
     }
 
 

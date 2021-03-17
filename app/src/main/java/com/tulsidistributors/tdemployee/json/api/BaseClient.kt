@@ -1,10 +1,10 @@
-package com.tulsidistributors.tdemployee.json
+ package com.tulsidistributors.tdemployee.json
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object BaseClient {
-    private val BASE_URL = "http://192.168.4.176:8000/api/sales_executive/";
+    private val BASE_URL = "http://192.168.4.164:8000/api/sale_executive/";
 
     val getInstance: TDApi by lazy {
         val retrofit =

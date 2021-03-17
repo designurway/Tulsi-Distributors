@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bg_color"
+    tools:context=".AboutUsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/login_mobile_bg"
+        android:layout_marginBottom="20dp">
+
+
+
+        <TextView
+            android:id="@+id/tulsi_marketing_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TULSI MARKETING"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:layout_marginTop="50dp"
+            android:textStyle="bold"
+            android:padding="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/oceanblue">
+
+        </TextView>
+        <TextView
+            android:id="@+id/electronics_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/tulsi_marketing_tv"
+            app:layout_constraintTop_toBottomOf="@+id/tulsi_marketing_tv"
+            app:layout_constraintEnd_toEndOf="@+id/tulsi_marketing_tv"
+            android:text="Electronic Marketing"
+            android:textColor="@color/black"
+            android:background="@color/gainsboro"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textSize="20dp">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/discription_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/electronics_tv"
+            app:layout_constraintTop_toBottomOf="@+id/electronics_tv"
+            app:layout_constraintEnd_toEndOf="@+id/electronics_tv"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:textAlignment="center"
+            android:text="@string/discription"
+            android:textSize="15dp"
+            android:textColor="@color/white">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/version_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/electronics_tv"
+            app:layout_constraintTop_toBottomOf="@+id/discription_tv"
+            app:layout_constraintEnd_toEndOf="@+id/electronics_tv"
+            android:layout_marginTop="30dp"
+            android:text="Version"
+            android:textSize="20dp"
+            android:textColor="@color/gainsboro">
+
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/version_num_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/electronics_tv"
+            app:layout_constraintTop_toBottomOf="@+id/version_tv"
+            app:layout_constraintEnd_toEndOf="@+id/electronics_tv"
+            android:layout_marginTop="10dp"
+            android:text="1.111"
+            android:textSize="15dp"
+            android:textColor="@color/gainsboro">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/contact_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/electronics_tv"
+            app:layout_constraintTop_toBottomOf="@+id/version_num_tv"
+            app:layout_constraintEnd_toEndOf="@+id/electronics_tv"
+            android:layout_marginTop="30dp"
+            android:text="Contact Us"
+            android:textSize="20dp"
+            android:textColor="@color/gainsboro">
+
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/contact_num_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/electronics_tv"
+            app:layout_constraintTop_toBottomOf="@+id/contact_tv"
+            app:layout_constraintEnd_toEndOf="@+id/electronics_tv"
+            android:layout_marginTop="10dp"
+            android:drawableLeft="@drawable/telephone"
+            android:text="  100-108-229376375"
+            android:textSize="15dp"
+            android:padding="10dp"
+            android:textColor="@color/gainsboro">
+
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/contact__phonenum_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/electronics_tv"
+            app:layout_constraintTop_toBottomOf="@+id/contact_num_tv"
+            app:layout_constraintEnd_toEndOf="@+id/electronics_tv"
+            android:layout_marginTop="10dp"
+            android:drawableLeft="@drawable/phone_icon"
+            android:text="  88996656899"
+            android:textSize="15dp"
+            android:padding="10dp"
+            android:textColor="@color/gainsboro">
+
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/email_id_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/electronics_tv"
+            app:layout_constraintTop_toBottomOf="@+id/contact__phonenum_tv"
+            app:layout_constraintEnd_toEndOf="@+id/electronics_tv"
+            android:layout_marginTop="10dp"
+            android:drawableLeft="@drawable/mail_icon"
+            android:text="  tulasimarketing@gmail.com"
+            android:textSize="15dp"
+            android:padding="10dp"
+            android:textColor="@color/gainsboro">
+
+        </TextView>
+
+
+
+        <TextView
+            android:id="@+id/follow_us_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/card_view_cv"
+            android:layout_marginBottom="30dp"
+            android:text="Follow Us"
+            android:textColor="@color/white"
+            android:textAlignment="center">
+        </TextView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/card_view_cv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/facebook_page_imv"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/facebook_icon"
+                android:background="@color/bg_color"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </ImageView>
+
+            <ImageView
+                android:id="@+id/google_page_imv"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/google_icon"
+                android:background="@color/bg_color"
+                android:layout_marginStart="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/facebook_page_imv">
+
+            </ImageView>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

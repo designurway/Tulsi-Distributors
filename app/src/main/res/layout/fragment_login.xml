@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edit_bg"
             android:padding="13dp"
-            android:hint="Email"
+            android:hint="Employee Id"
             android:maxLines="1"
             android:singleLine="true"
             android:textColorHint="@color/bg_color"

@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -62,17 +63,12 @@ class SelfieFragment : Fragment() {
             ) {
 
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                photoFile = getPhotoFile(FILE_NAME)
 
-                val fileProvider = FileProvider.getUriForFile(
-                    requireContext(),
-                        "com.tulsidistributors.fileProvider",
-                    photoFile
-                )
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-
-                startActivityForResult(intent, CAMERA_REQUEST_CODE)
-
+                try {
+                    startActivityForResult(intent, CAMERA_REQUEST_CODE)
+                }catch (e:Exception){
+                    Toast.makeText(requireContext(), "Exception $e", Toast.LENGTH_SHORT).show()
+                }
 
             } else {
                 ActivityCompat.requestPermissions(
@@ -85,53 +81,6 @@ class SelfieFragment : Fragment() {
 
     }
 
-    private fun getPhotoFile(fileName: String): File {
-
-        //Use `getExternalFilesDir` on Context to access paackage-specific directories
-        // this is the storageDir where we r going to save photo
-        val storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(fileName, ".jpg", storageDir)
-
-
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-
-        if (requestCode == CAMERA_REQUEST_CODE) {
-
-            val image = BitmapFactory.decodeFile(photoFile.absolutePath)
-            binding.selfieImage.setImageBitmap(image)
-        }
-
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PREMISSION_CODE) {
-
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(intent, CAMERA_REQUEST_CODE)
-
-            } else {
-                Toast.makeText(
-                    context,
-                    "Permission denied! Kindly grant permissions from settings",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-        }
-    }
 
     
 

@@ -12,12 +12,15 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.asLiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentLoginBinding
+import com.tulsidistributors.tdemployee.datastore.UserPreferences
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
+import com.tulsidistributors.tdemployee.model.login.LoginModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,11 +32,12 @@ import java.lang.Exception
 
 class LoginFragment : Fragment() {
 
-    lateinit var binding:FragmentLoginBinding
+    lateinit var binding: FragmentLoginBinding
     lateinit var forgotPass: TextView
     lateinit var loginEmpId: EditText
     lateinit var loginPassword: EditText
     lateinit var loginSubmit: ImageView
+    lateinit var userPrefrence: UserPreferences
 
 
     override fun onCreateView(
@@ -41,12 +45,14 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentLoginBinding.inflate(inflater,container,false)
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        userPrefrence = UserPreferences(requireContext())
 
         forgotPass = binding.forgotPassTxt
         loginEmpId = binding.emailEt
@@ -77,60 +83,71 @@ class LoginFragment : Fragment() {
             CoroutineScope(Dispatchers.Main).launch {
 
                 try {
-                    val response = executiveLogin(empId,pwd)
+                    val response = executiveLogin(empId, pwd)
 
-                    if (response.isSuccessful){
+                    if (response.isSuccessful) {
                         val data = response.body()
 
-                        if(data?.status.equals("1")){
+                        if (data?.status.equals("1")) {
+
+                            //Saveing LoginDetail In DataStore
+                            val emp_id = data!!.data.emp_id
+                            val first_name = data.data.first_name
+                            val emp_emal = data.data.email
+
+                            userPrefrence.saveUserLoginDetail(
+                                empId = emp_id,
+                                email = emp_emal,
+                                first_name = first_name
+                            )
 
                             Toast.makeText(context, data?.message, Toast.LENGTH_SHORT).show()
-                            val action=LoginFragmentDirections.actionLoginFragmentToSelfieFragment()
+                            val action =
+                                LoginFragmentDirections.actionLoginFragmentToSelfieFragment()
                             view.findNavController().navigate(action)
 
 
-                        }else{
+                        } else {
                             Toast.makeText(context, data?.message, Toast.LENGTH_SHORT).show()
 
                         }
-                        
-                    }else{
-                        Toast.makeText(requireContext(), "Response Code ${response.code()} Response Message : ${response.message()}", Toast.LENGTH_SHORT).show()
+
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Response Code ${response.code()} Response Message : ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     // Show API error. This is the error raised by the client.
 
-                    Toast.makeText(requireContext(),
+                    Toast.makeText(
+                        requireContext(),
                         "Exception Occurred: ${e.message}",
-                        Toast.LENGTH_LONG).show()
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
 
-               /* val response = executiveLogin(empId, pwd)
 
-                if (response.isSuccessful)
-
-                if(response.status.equals("1")){
-
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
-                    val action=LoginFragmentDirections.actionLoginFragmentToSelfieFragment()
-                    view.findNavController().navigate(action)
-
-
-                }else{
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
-
-                }*/
             }
         }
 
-
-
     }
 
-    suspend private fun executiveLogin(empId: String, pwd: String): Response<StatusMessageModel> {
+
+
+    suspend private fun executiveLogin(empId: String, pwd: String): Response<LoginModel> {
         return withContext(Dispatchers.IO) {
 
             BaseClient.getInstance.executiveLogin(empId, pwd)
         }
+    }
+
+    private fun getLoginData() {
+
+        userPrefrence.empIdFlow.asLiveData().observe(viewLifecycleOwner, {empId->
+            Toast.makeText(requireContext(), "EmpId: $empId", Toast.LENGTH_SHORT).show()
+        })
     }
 }

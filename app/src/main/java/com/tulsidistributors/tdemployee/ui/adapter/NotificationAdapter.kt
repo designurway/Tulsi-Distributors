@@ -1,13 +1,12 @@
-package com.tulsidistributors.tdemployee.ui.home.fragment.adapter
+package com.tulsidistributors.tdemployee.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.R
-import com.tulsidistributors.tdemployee.ui.home.model.NotificationModel
+import com.tulsidistributors.tdemployee.ui.home.fragment.models.NotificationModel
 
 class NotificationAdapter(val notificationList:ArrayList<NotificationModel>): RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 
@@ -29,8 +28,8 @@ class NotificationAdapter(val notificationList:ArrayList<NotificationModel>): Re
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.title.text=notificationList.get(position).title
-        holder.message.text=notificationList.get(position).message
-        holder.date.text=notificationList.get(position).sentDate
+        holder.message.text=notificationList.get(position).body
+        holder.date.text=notificationList.get(position).createdDate
 
 
     }

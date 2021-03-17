@@ -11,6 +11,7 @@
         app:cardUseCompatPadding="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pendingOrderClicked"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -50,6 +51,7 @@
 
 
             <TextView
+                android:id="@+id/assignedOrderTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="16m"
@@ -68,20 +70,21 @@
                 android:layout_marginEnd="25dp"
                 android:text="The Corner Store."
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/shopImgCard"
                 app:layout_constraintTop_toBottomOf="@id/pendingTxt" />
 
             <TextView
+                android:id="@+id/shopAddress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="#191, Suswani Towers,3rd floor, B Block, 1st stage, C-Block, JP Nagar, Mysuru"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="5dp"
-                android:textSize="17sp"
+                android:paddingBottom="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/shopImgCard"
                 app:layout_constraintTop_toBottomOf="@id/shopName" />

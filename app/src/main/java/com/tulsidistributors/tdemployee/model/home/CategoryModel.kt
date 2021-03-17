@@ -1,4 +1,4 @@
-package com.tulsidistributors.tdemployee.ui.home.model
+package com.tulsidistributors.tdemployee.model.home
 
 import android.graphics.drawable.Drawable
 

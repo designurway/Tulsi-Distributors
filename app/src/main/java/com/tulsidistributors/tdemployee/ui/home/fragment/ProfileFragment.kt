@@ -5,17 +5,55 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavDirections
+import androidx.navigation.findNavController
 import com.tulsidistributors.tdemployee.R
+import com.tulsidistributors.tdemployee.databinding.FragmentProfileBinding
 
 
 class ProfileFragment : Fragment() {
+
+    lateinit var binding: FragmentProfileBinding
+    lateinit var action: NavDirections
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.changPassLayout.setOnClickListener {
+
+        }
+
+
+        binding.supportLayout.setOnClickListener {
+
+            action = ProfileFragmentDirections.actionProfileFragmentToSupportFragment()
+            requireView().findNavController().navigate(action)
+        }
+
+
+        binding.privacyTxt.setOnClickListener {
+            action = ProfileFragmentDirections.actionProfileFragmentToPrivacyPolicyFragment()
+            requireView().findNavController().navigate(action)
+        }
+
+
+        binding.termsTxt.setOnClickListener {
+            action = ProfileFragmentDirections.actionProfileFragmentToTermsConditionFragment()
+            requireView().findNavController().navigate(action)
+        }
+
+
+        binding.aboutTxt.setOnClickListener {
+            action = ProfileFragmentDirections.actionProfileFragmentToAboutUsFragment()
+            requireView().findNavController().navigate(action)
+        }
+    }
 }

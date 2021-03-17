@@ -9,12 +9,39 @@
         android:id="@+id/homeFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_assignedOrderFragment"
+            app:destination="@id/assignedOrderFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_completedOrderFragment"
+            app:destination="@id/completedOrderFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_attendenceFragment"
+            app:destination="@id/attendenceFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_stockFragment"
+            app:destination="@id/stockFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_termsConditionFragment"
+            app:destination="@id/termsConditionFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_aboutUsFragment"
+            app:destination="@id/aboutUsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_supportFragment"
+            app:destination="@id/supportFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_privacyPolicyFragment"
+            app:destination="@id/privacyPolicyFragment" />
+
+    </fragment>
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.NotificationFragment"
@@ -25,4 +52,60 @@
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AddProductFragment"
         android:label="fragment_add_product"
         tools:layout="@layout/fragment_add_product" />
+    <fragment
+        android:id="@+id/completedOrderFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.CompletedOrderFragment"
+        android:label="fragment_completed_order"
+        tools:layout="@layout/fragment_completed_order" />
+    <fragment
+        android:id="@+id/assignedOrderFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AssignedOrderFragment"
+        android:label="fragment_assigned_order"
+        tools:layout="@layout/fragment_assigned_order" >
+        <action
+            android:id="@+id/action_assignedOrderFragment_to_addProductListFragment2"
+            app:destination="@id/addProductListFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/attendenceFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AttendenceFragment"
+        android:label="fragment_attendence"
+        tools:layout="@layout/fragment_attendence" />
+    <fragment
+        android:id="@+id/stockFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.search_stock.StockFragment"
+        android:label="fragment_stock"
+        tools:layout="@layout/fragment_stock" />
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.AboutUsFragment"
+        android:label="fragment_about_us"
+        tools:layout="@layout/fragment_about_us" />
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.PrivacyPolicyFragment"
+        android:label="fragment_privacy_policy"
+        tools:layout="@layout/fragment_privacy_policy" />
+    <fragment
+        android:id="@+id/supportFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.SupportFragment"
+        android:label="fragment_support"
+        tools:layout="@layout/fragment_support" />
+    <fragment
+        android:id="@+id/termsConditionFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.TermsConditionFragment"
+        android:label="fragment_terms_condition"
+        tools:layout="@layout/fragment_terms_condition" />
+    <fragment
+        android:id="@+id/addProductListFragment2"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AddProductListFragment"
+        android:label="fragment_add_product_list"
+        tools:layout="@layout/fragment_add_product_list" >
+        <argument
+            android:name="dealer_id"
+            app:argType="string" />
+        <argument
+            android:name="address"
+            app:argType="string" />
+    </fragment>
 </navigation>
