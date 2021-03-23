@@ -34,8 +34,14 @@ class AssignedOrderAdapter(
         holder.assignedOrderTime.text = orderList.get(position).date
 
         holder.pendingOrderClicked.setOnClickListener {
-            val id = orderList.get(position).id
-            listner.onItemClicked(position,orderList.get(position).address,id)
+            val dealer_id = orderList.get(position).dealer_id
+            val shop_address = orderList.get(position).address
+            listner.onItemClicked(
+                position,
+                shopName = orderList.get(position).shop_name,
+                dealer_id = dealer_id,
+                shop_address = shop_address
+            )
         }
 
     }
@@ -48,6 +54,6 @@ class AssignedOrderAdapter(
 }
 
 interface AssignedOrderClicked {
-    fun onItemClicked(postion: Int,shopName:String,id:String)
+    fun onItemClicked(postion: Int, shopName: String, dealer_id: String, shop_address: String)
 }
 

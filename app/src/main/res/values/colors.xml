@@ -12,6 +12,7 @@
     <color name="lightBlue">#D4EDF2</color>
     <color name="colorPrimary">#32547F</color>
     <color name="blue">#252d4a</color>
+    <color name="transparent">#80808080</color>
     <color name="pending">#FF9800</color>
 
     <color name="bg_light">#252D4A</color>

@@ -66,11 +66,14 @@ class AttendenceFragment : Fragment() {
                 requireContext(),
                 DatePickerDialog.OnDateSetListener { view, Year, Month, dayOfMonth ->
 
-                    selectedDate = "$Year-${(Month + 1)}-$dayOfMonth"
+                    //Date format
+                    selectedDate = "$dayOfMonth-${(Month + 1)}-$Year"
 
                     date__tv.setText(dayOfMonth.toString() + "/" + (Month + 1) + "/" + Year)
 
                     getAttandance("Emp", selectedDate)
+
+                    Toast.makeText(requireContext(), "selected date $selectedDate", Toast.LENGTH_SHORT).show()
 
                 }, year, month, day
             )
@@ -85,7 +88,7 @@ class AttendenceFragment : Fragment() {
 
 
 
-        getAttandance("Emp", "2021-03-01")
+        getAttandance("Emp", "22-3-2021")
 
 
     }
@@ -102,7 +105,7 @@ class AttendenceFragment : Fragment() {
 
                     if (resposeData?.status.equals("1")) {
 
-                        val loginTime = resposeData?.data?.logi_in_time
+                        val loginTime = resposeData?.data?.login_time
                         val logoutTime = resposeData?.data?.logout_time
 
                         binding.attendName.text = resposeData?.data?.first_name

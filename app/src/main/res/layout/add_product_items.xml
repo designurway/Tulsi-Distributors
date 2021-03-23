@@ -33,14 +33,15 @@
 
             <TextView
                 android:id="@+id/brand_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:text="Sony"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/black"
-                android:textSize="19sp"
                 android:textStyle="bold"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toStartOf="@id/product_price"
                 app:layout_constraintStart_toEndOf="@+id/product_img"
                 app:layout_constraintTop_toTopOf="@id/product_img" />
 
@@ -60,8 +61,8 @@
                 android:id="@+id/product_des"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
                 android:text="Sony Alpha ILCE 6000L 24.3 MP Mirrorless Digital SLR Camera with 16-50 mm (APS-C Sensor, Fast Auto Focus,Eye AF, Light Weight) - Black"
                 android:textColor="@color/black"
                 android:textSize="12sp"
@@ -73,7 +74,7 @@
 
 
             <Button
-                android:id="@+id/product_edit_btn"
+                android:id="@+id/addProductBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="10dp"
@@ -109,11 +110,11 @@
                 android:padding="5dp"
                 app:layout_constraintStart_toStartOf="@id/product_des"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/product_edit_btn"
+                app:layout_constraintEnd_toStartOf="@+id/addProductBtn"
                 app:layout_constraintTop_toBottomOf="@+id/product_des">
 
                 <ImageView
-                    android:id="@+id/minus_iv"
+                    android:id="@+id/minusBtn"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginRight="5dp"
@@ -133,12 +134,12 @@
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    app:layout_constraintEnd_toStartOf="@+id/plus_img_iv"
-                    app:layout_constraintStart_toEndOf="@+id/minus_iv"
+                    app:layout_constraintEnd_toStartOf="@+id/plusBtn"
+                    app:layout_constraintStart_toEndOf="@+id/minusBtn"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/plus_img_iv"
+                    android:id="@+id/plusBtn"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginLeft="10dp"

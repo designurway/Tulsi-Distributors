@@ -7,6 +7,6 @@ data class AttendanceData(
     val email:String,
     val phone_number:String,
     val date:String,
-    val logi_in_time:String,
+    val login_time:String,
     val logout_time:String
 )

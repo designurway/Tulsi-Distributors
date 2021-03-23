@@ -107,5 +107,8 @@
         <argument
             android:name="address"
             app:argType="string" />
+        <argument
+            android:name="shopName"
+            app:argType="string" />
     </fragment>
 </navigation>

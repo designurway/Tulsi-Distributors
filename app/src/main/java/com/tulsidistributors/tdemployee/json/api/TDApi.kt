@@ -10,6 +10,9 @@ import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductMod
 import com.tulsidistributors.tdemployee.model.login.LoginModel
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
 import com.tulsidistributors.tdemployee.ui.home.fragment.models.NotificationDataModel
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -47,16 +50,6 @@ interface TDApi {
     suspend fun updateNewPassword(
         @Field("phone") phone: String,
         @Field("password") password: String
-    ): Response<StatusMessageModel>
-
-    @FormUrlEncoded
-    @POST("uploadSelfie")
-    suspend fun uploadSelfie(
-        @Field("sales_executive_id") salesId: String,
-        @Field("login_date") login_date: String,
-        @Field("latitude") latitude: String,
-        @Field("longitude") longitude: String,
-        @Field("profile_image") profile_image: String
     ): Response<StatusMessageModel>
 
 
@@ -110,12 +103,31 @@ interface TDApi {
 
     @GET("getDealerProductItem")
     suspend fun getDealerProductItem(
-        @Query("dealer_id") dealer_id:String
+        @Query("dealer_id") dealer_id:String,
+        @Query("empId") empId:String
     ):Response<DealerProductModel>
 
     @GET("searchDealerProductItem")
     suspend fun searchDealerProductItem(
         @Query("dealer_id") dealer_id:String,
-        @Query("search") search:String
+        @Query("search") search:String,
+        @Query("empId") empId:String
     ):Response<DealerProductModel>
+
+    @Multipart
+    @POST("updateProfileImage")
+    suspend fun uploadImage(
+        @Part image: MultipartBody.Part,
+        @Part("phone") phone: RequestBody,
+    ): Response<StatusMessageModel>
+
+    @Multipart
+    @POST("uploadSelfie")
+    suspend fun uploadSelfie(
+        @Part image: MultipartBody.Part,
+        @Part("saleExecutiveId") saleExecutiveId:RequestBody,
+        @Part("loginDate")loginDate:RequestBody,
+        @Part("latitude")latitude:RequestBody,
+        @Part("longitude") longitude:RequestBody
+    ): Response<StatusMessageModel>
 }

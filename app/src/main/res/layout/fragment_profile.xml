@@ -58,8 +58,7 @@
             android:textAllCaps="false"
             android:layout_marginTop="13dp"
             android:textColor="@color/white"
-            android:background="@drawable/edit_profile_bg"
-            app:layout_constraintStart_toStartOf="@id/mobile"
+            android:background="@drawable/btn"            app:layout_constraintStart_toStartOf="@id/mobile"
             app:layout_constraintTop_toBottomOf="@+id/mobile"/>
 
         <TextView

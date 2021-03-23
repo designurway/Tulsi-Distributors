@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentForgetPasswordBinding
@@ -17,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 
 class ForgetPasswordFragment : Fragment() {
@@ -50,29 +52,44 @@ class ForgetPasswordFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            CoroutineScope(Dispatchers.Main).launch {
-                val response = generateOtp(phone)
-                if (response.status.equals("1")) {
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
-                    val action =
-                        ForgetPasswordFragmentDirections.actionForgetPasswordFragmentToVerifyForgotPassFragment(phone)
-                    view.findNavController().navigate(action)
-                } else {
 
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+            viewLifecycleOwner.lifecycleScope.launch {
 
+                try {
+                    val response = generateOtp(phone)
+                    val responseData = response.body()
+                    if (response.isSuccessful){
+                        if (responseData?.status.equals("1")){
+                            Toast.makeText(requireContext(), "${responseData?.message}", Toast.LENGTH_SHORT).show()
+                            val action =ForgetPasswordFragmentDirections.actionForgetPasswordFragmentToVerifyForgotPassFragment(
+                                phone
+                            )
+                            view.findNavController().navigate(action)
+                        }else{
+                            Toast.makeText(requireContext(), "On Fa ${responseData?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }else{
+                        Toast.makeText(requireContext(), "Response Code ${response.code()} Response Message ${response.message()}", Toast.LENGTH_SHORT).show()
+                    }
+
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Exception Occured ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            }
 
+            }
 
         }
 
 
     }
 
-    suspend private fun generateOtp(phone: String): StatusMessageModel {
+    suspend private fun generateOtp(phone: String): Response<StatusMessageModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.generateOtp(phone).body()!!
+            BaseClient.getInstance.generateOtp(phone)
         }
     }
 }

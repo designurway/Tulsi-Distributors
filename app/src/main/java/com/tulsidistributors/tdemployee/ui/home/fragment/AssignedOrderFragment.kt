@@ -80,9 +80,14 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
         }
     }
 
-    override fun onItemClicked(postion: Int, address: String, id: String) {
+    override fun onItemClicked(
+        postion: Int,
+        shopName: String,
+        dealer_id: String,
+        shop_address: String
+    ) {
         val action =
-            AssignedOrderFragmentDirections.actionAssignedOrderFragmentToAddProductListFragment2(address = address,dealerId = id)
+            AssignedOrderFragmentDirections.actionAssignedOrderFragmentToAddProductListFragment2(dealerId = dealer_id,address = shop_address,shopName = shopName)
         requireView().findNavController().navigate(action)
     }
 
