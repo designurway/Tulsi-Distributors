@@ -1,10 +1,10 @@
 package com.tulsidistributors.tdemployee.model.completed_order
 
 data class CompletedOrderData(
-    val id: String,
+    val dealer_id: String,
+    val name: String,
     val shop_name: String,
     val address: String,
-    val phone_number: String,
     val order_status: String,
-    val date_time_in: String
+    val date: String
 )

@@ -1,10 +1,14 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment
 
+import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
@@ -16,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.dataModel
 import com.tulsidistributors.tdemployee.databinding.AddProductItemsBinding
+import com.tulsidistributors.tdemployee.databinding.AddQtyDialogBinding
 import com.tulsidistributors.tdemployee.databinding.FragmentAddProductListBinding
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductData
@@ -38,7 +43,10 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     var id: String = ""
     var shop_address: String = ""
     var shopName: String = ""
-     var totalQty:Int =0
+    var totalQty: Int = 0
+    lateinit var oldQntyTv:TextView
+
+    lateinit var productItem: ArrayList<DealerProductData>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,8 +102,11 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                     val responseData = response.body()
 
                     if (responseData?.status.equals("1")) {
-                        val productItem: ArrayList<DealerProductData> =
+                        productItem =
                             responseData!!.product_details
+
+
+
                         val adapter = AddProductAdapter(productItem, this@AddProductListFragment)
                         productRecycler.adapter = adapter
                     } else {
@@ -138,7 +149,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                     val responseData = response.body()
 
                     if (responseData?.status.equals("1")) {
-                        val productItem: ArrayList<DealerProductData> =
+                        productItem  =
                             responseData!!.product_details
                         val adapter = AddProductAdapter(productItem, this@AddProductListFragment)
                         productRecycler.adapter = adapter
@@ -188,7 +199,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         (activity as HomePageActivity).showToolbar()
     }
 
-    override fun addButtonClicked(position: String, productQty: String) {
+    override fun addButtonClicked(position: Int, productQty: Int) {
         Toast.makeText(
             requireContext(),
             "Add buttuon Clicked $position Product $productQty",
@@ -196,37 +207,55 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         ).show()
 
     }
-    var qty:Int = 0
-    override fun plusButtonClicked(position: String, productQty: String,productQtyTxt: TextView) {
 
-//        val productQtyTxt:TextView = binding.findViewById(R.id.product_qty_tv)
+    override fun plusButtonClicked(position: Int, productQty: Int, productQtyTxt: TextView) {
 
-//
-//       var  model :dataModel?=null
-////
-//        model?.Qnty= qty
-////
-//        totalQty += model!!.Qnty
+        productItem[position].quantity = productQty
 
-//        productQtyTxt.text = totalQty.toString()
-        qty=qty+1
-//        model.Qnty=qty
+        var qty =  productItem[position].quantity
 
-        Toast.makeText(
-            requireContext(),
-            "Plus buttuon Clicked $position Product $qty",
-            Toast.LENGTH_SHORT
-        ).show()
+        productQtyTxt.text = qty.toString()
+
 
     }
 
-    override fun minusButtonClicked(position: String, productQty: String, productQtyTxt: TextView) {
-        Toast.makeText(
-            requireContext(),
-            "Minus buttuon Clicked $position Product $productQty",
-            Toast.LENGTH_SHORT
-        ).show()
+    override fun minusButtonClicked(position: Int, productQty: Int, productQtyTxt: TextView) {
+
+
+        productItem[position].quantity = productQty
+
+        var qty =  productItem[position].quantity
+
+        productQtyTxt.text = qty.toString()
     }
 
+    override fun openDialogBox(oldQnty: TextView, position: Int) {
+       oldQntyTv = oldQnty
+        showDialog("Qnt")
+    }
+
+    private fun showDialog(title: String) {
+       /* val binding:AddQtyDialogBinding = AddQtyDialogBinding
+            .inflate(LayoutInflater.from(getContext()))*/
+
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.add_qty_dialog)
+        val body = dialog.findViewById(R.id.tvBody) as EditText
+
+        val yesBtn = dialog.findViewById(R.id.btn_yes) as Button
+        val noBtn = dialog.findViewById(R.id.btn_No) as Button
+
+        yesBtn.setOnClickListener {
+            dialog.dismiss()
+            oldQntyTv.text = body.text
+        }
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+
+    }
 
 }

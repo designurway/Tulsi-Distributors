@@ -1,4 +1,4 @@
-package com.tulsidistributors.tdemployee.ui.home.fragment
+package com.tulsidistributors.tdemployee.ui.home.fragment.completed_order
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.R
@@ -22,7 +23,7 @@ import retrofit2.Response
 import java.lang.Exception
 
 
-class CompletedOrderFragment : Fragment() {
+class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrderClicked {
 
     lateinit var binding: FragmentCompletedOrderBinding
     lateinit var cOrderRecyclerView: RecyclerView
@@ -52,8 +53,9 @@ class CompletedOrderFragment : Fragment() {
                 if (response.isSuccessful) {
                     val data = response.body()
 
-                    val orderData:ArrayList<CompletedOrderData> = data!!.completed_order
-                    compledtedAdapter = CompletedOrderAdapter(orderData)
+                    val orderData: ArrayList<CompletedOrderData> = data!!.completed_order
+                    compledtedAdapter =
+                        CompletedOrderAdapter(orderData, this@CompletedOrderFragment)
 
                     cOrderRecyclerView.adapter = compledtedAdapter
 
@@ -80,6 +82,16 @@ class CompletedOrderFragment : Fragment() {
         return withContext(Dispatchers.IO) {
             BaseClient.getInstance.getCompletedOrder("TD001")
         }
+    }
+
+    override fun OnOrderItemClicked(position: Int, dealerId: String, date: String) {
+        val action =
+            CompletedOrderFragmentDirections.actionCompletedOrderFragmentToPlacedOrderListFragment(
+                dealerId = dealerId,
+                date
+            )
+
+        requireView().findNavController().navigate(action)
     }
 
 

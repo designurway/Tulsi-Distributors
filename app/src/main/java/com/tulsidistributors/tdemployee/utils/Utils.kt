@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.utils
 
+import android.app.Activity
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -16,6 +17,11 @@ fun View.snackbar(message: String) {
         }
 
     }.show()
+}
+
+fun Activity.showToast(message: String){
+
+    android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
 }
 
 fun ContentResolver.getFileName(uri:Uri):String{

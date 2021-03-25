@@ -29,7 +29,6 @@ class SearchStockItemFragment : Fragment() {
 
     lateinit var binding: FragmentSearchStockItemBinding
     lateinit var searchStockRecycler: RecyclerView
-    lateinit var brandName: String
     val args: SearchStockItemFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -44,7 +43,7 @@ class SearchStockItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        brandName = args.brandName
+//        brandName = args.brandName
 
         searchStockRecycler = binding.searchStockRecycler
 
@@ -53,11 +52,11 @@ class SearchStockItemFragment : Fragment() {
 
         binding.searchViewItem.searchItemEt.doOnTextChanged { text, start, before, count ->
 
-            searchStockItem(text.toString(),brandName)
+            searchStockItem(text.toString(),"HAIER")
         }
 
 
-        getStockItem(brandName)
+        getStockItem("HAIER")
 
     }
 

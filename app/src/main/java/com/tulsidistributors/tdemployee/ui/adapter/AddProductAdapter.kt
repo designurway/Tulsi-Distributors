@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.databinding.AddProductItemsBinding
 import com.tulsidistributors.tdemployee.databinding.FragmentAddProductListBinding
@@ -23,6 +24,8 @@ class AddProductAdapter(val productItem: ArrayList<DealerProductData>,val listne
         val minusBtn = binding.minusBtn
         val plusBtn = binding.plusBtn
         val productQtyTxt = binding.productQtyTv
+        val constriantQuantity = binding.constriantQuantity
+        val oldQnty = binding.oldQnty
 
     }
 
@@ -37,20 +40,34 @@ class AddProductAdapter(val productItem: ArrayList<DealerProductData>,val listne
         holder.productDrescription.text = productItem.get(position).description
         holder.productPrice.text = "Rs ${productItem.get(position).basic_amount}"
 
-        val productQty = holder.productQtyTxt.text.toString().trim()
+        var productQty = holder.productQtyTxt.text.toString().toInt()
 
 
         holder.addProductBtn.setOnClickListener {
-            listner.addButtonClicked(position = position.toString(),productQty)
+
+            listner.addButtonClicked(position = position,productQty)
+
+
+
         }
 
         holder.minusBtn.setOnClickListener {
-            listner.minusButtonClicked(position = position.toString(),productQty,holder.productQtyTxt)
+            if (productQty>1){
+                productQty--
+                listner.minusButtonClicked(position = position,productQty,holder.productQtyTxt)
+
+            }
+
         }
 
         holder.plusBtn.setOnClickListener {
+            productQty++
+            listner.plusButtonClicked(position = position,productQty,holder.productQtyTxt)
+        }
 
-            listner.plusButtonClicked(position = position.toString(),productQty,holder.productQtyTxt)
+        holder.constriantQuantity.setOnClickListener {
+
+            listner.openDialogBox(holder.oldQnty, position)
         }
     }
 
@@ -61,8 +78,8 @@ class AddProductAdapter(val productItem: ArrayList<DealerProductData>,val listne
 }
 
 interface AddProductItemClickListner{
-    fun addButtonClicked(position:String,productQty:String)
-    fun plusButtonClicked(position:String,productQty:String,productQtyTxt: TextView)
-    fun minusButtonClicked(position:String,productQty:String,productQtyTxt: TextView)
-
+    fun addButtonClicked(position:Int,productQty:Int)
+    fun plusButtonClicked(position:Int,productQty:Int,productQtyTxt: TextView)
+    fun minusButtonClicked(position:Int,productQty:Int,productQtyTxt: TextView)
+    fun openDialogBox(oldQnty:TextView,position: Int)
 }

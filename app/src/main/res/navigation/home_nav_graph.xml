@@ -40,6 +40,12 @@
         <action
             android:id="@+id/action_profileFragment_to_privacyPolicyFragment"
             app:destination="@id/privacyPolicyFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_updateProfileFragment"
+            app:destination="@id/updateProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
 
     </fragment>
     <fragment
@@ -54,9 +60,13 @@
         tools:layout="@layout/fragment_add_product" />
     <fragment
         android:id="@+id/completedOrderFragment"
-        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.CompletedOrderFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.completed_order.CompletedOrderFragment"
         android:label="fragment_completed_order"
-        tools:layout="@layout/fragment_completed_order" />
+        tools:layout="@layout/fragment_completed_order" >
+        <action
+            android:id="@+id/action_completedOrderFragment_to_placedOrderListFragment"
+            app:destination="@id/placedOrderListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/assignedOrderFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AssignedOrderFragment"
@@ -109,6 +119,56 @@
             app:argType="string" />
         <argument
             android:name="shopName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateProfileFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.UpdateProfileFragment"
+        android:label="fragment_update_profile"
+        tools:layout="@layout/fragment_update_profile" />
+    <fragment
+        android:id="@+id/changeNewPassFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.update_password.ChangeNewPassFragment"
+        android:label="fragment_change_new_pass"
+        tools:layout="@layout/fragment_change_new_pass" >
+        <argument
+            android:name="phone"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_changeNewPassFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.update_password.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password" >
+        <action
+            android:id="@+id/action_changePasswordFragment_to_verifyChangePassFragment"
+            app:destination="@id/verifyChangePassFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifyChangePassFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.update_password.VerifyChangePassFragment"
+        android:label="fragment_verify_change_pass"
+        tools:layout="@layout/fragment_verify_change_pass" >
+        <action
+            android:id="@+id/action_verifyChangePassFragment_to_changeNewPassFragment"
+            app:destination="@id/changeNewPassFragment" />
+        <argument
+            android:name="phone"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/placedOrderListFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.completed_order.PlacedOrderListFragment"
+        android:label="fragment_placed_order_list"
+        tools:layout="@layout/fragment_placed_order_list" >
+        <argument
+            android:name="dealerId"
+            app:argType="string" />
+        <argument
+            android:name="purchaseDate"
             app:argType="string" />
     </fragment>
 </navigation>

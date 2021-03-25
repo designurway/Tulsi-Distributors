@@ -8,6 +8,7 @@ import com.tulsidistributors.tdemployee.model.completed_order.CompletedOderModel
 import com.tulsidistributors.tdemployee.model.completed_order.CompletedOrderData
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductModel
 import com.tulsidistributors.tdemployee.model.login.LoginModel
+import com.tulsidistributors.tdemployee.model.placed_order_list.PlacedOrderListModel
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
 import com.tulsidistributors.tdemployee.ui.home.fragment.models.NotificationDataModel
 import okhttp3.MultipartBody
@@ -119,6 +120,7 @@ interface TDApi {
     suspend fun uploadImage(
         @Part image: MultipartBody.Part,
         @Part("phone") phone: RequestBody,
+        @Part("name") name: RequestBody,
     ): Response<StatusMessageModel>
 
     @Multipart
@@ -130,4 +132,10 @@ interface TDApi {
         @Part("latitude")latitude:RequestBody,
         @Part("longitude") longitude:RequestBody
     ): Response<StatusMessageModel>
+
+    @GET("getPlacedOrderList")
+    suspend fun getPlacedOrderList(
+        @Query("dealer_id") dealer_id:String,
+        @Query("date") date:String
+    ):Response<PlacedOrderListModel>
 }

@@ -1,31 +1,33 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment
 
+import android.Manifest
 import android.content.Context
-import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.telephony.TelephonyManager
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.provider.Settings
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.datastore.dataStore
 import androidx.lifecycle.asLiveData
-import androidx.navigation.NavDirections
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentLoginBinding
-import com.tulsidistributors.tdemployee.datastore.UserPreferences
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
-import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.model.login.LoginModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
+import kotlinx.coroutines.*
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import retrofit2.Response
 import java.lang.Exception
 
@@ -37,8 +39,11 @@ class LoginFragment : Fragment() {
     lateinit var loginEmpId: EditText
     lateinit var loginPassword: EditText
     lateinit var loginSubmit: ImageView
-    lateinit var userPrefrence: UserPreferences
+    lateinit var loginPrefrence:UserLoginPreferences
 
+    lateinit var telephonyManager: TelephonyManager
+    lateinit var imeiNumber: String
+    private val REQUEST_CODE = 101
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +57,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        userPrefrence = UserPreferences(requireContext())
+        loginPrefrence = UserLoginPreferences(requireActivity()!!.dataStore)
 
         forgotPass = binding.forgotPassTxt
         loginEmpId = binding.emailEt
@@ -60,8 +65,11 @@ class LoginFragment : Fragment() {
         loginSubmit = binding.signBtn!!
 
         forgotPass.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment()
-            view.findNavController().navigate(action)
+             /*val action = LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment()
+             view.findNavController().navigate(action)*/
+
+            getLoginData()
+
         }
 
         loginSubmit.setOnClickListener {
@@ -92,13 +100,18 @@ class LoginFragment : Fragment() {
 
                             //Saveing LoginDetail In DataStore
                             val emp_id = data!!.data.emp_id
-                            val first_name = data.data.first_name
-                            val emp_emal = data.data.email
+                            val distributor_id = data.data.distributor_id
+                            val email = data.data.email
+                            val phone_number = data.data.phone_number
+                            val role = data.data.role
 
-                            userPrefrence.saveUserLoginDetail(
+
+                            loginPrefrence.saveUserLoginDetail(
                                 empId = emp_id,
-                                email = emp_emal,
-                                first_name = first_name
+                                distributor_id = distributor_id,
+                                email = email,
+                                phone = phone_number,
+                                role = role
                             )
 
                             Toast.makeText(context, data?.message, Toast.LENGTH_SHORT).show()
@@ -136,7 +149,6 @@ class LoginFragment : Fragment() {
     }
 
 
-
     suspend private fun executiveLogin(empId: String, pwd: String): Response<LoginModel> {
         return withContext(Dispatchers.IO) {
 
@@ -145,9 +157,10 @@ class LoginFragment : Fragment() {
     }
 
     private fun getLoginData() {
-
-        userPrefrence.empIdFlow.asLiveData().observe(viewLifecycleOwner, {empId->
+        loginPrefrence.empIdFlow.asLiveData().observe(viewLifecycleOwner, { empId ->
             Toast.makeText(requireContext(), "EmpId: $empId", Toast.LENGTH_SHORT).show()
         })
     }
+
+
 }

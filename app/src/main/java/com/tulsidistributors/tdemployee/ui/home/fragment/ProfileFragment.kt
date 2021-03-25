@@ -27,8 +27,14 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.changPassLayout.setOnClickListener {
+        binding.editProfileBtn.setOnClickListener {
+            action = ProfileFragmentDirections.actionProfileFragmentToUpdateProfileFragment()
+            requireView().findNavController().navigate(action)
+        }
 
+        binding.changPassLayout.setOnClickListener {
+            action = ProfileFragmentDirections.actionProfileFragmentToChangePasswordFragment()
+            requireView().findNavController().navigate(action)
         }
 
 
