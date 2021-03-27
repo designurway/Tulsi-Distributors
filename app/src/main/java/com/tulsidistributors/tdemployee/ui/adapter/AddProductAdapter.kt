@@ -3,6 +3,7 @@ package com.tulsidistributors.tdemployee.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -10,10 +11,13 @@ import com.tulsidistributors.tdemployee.databinding.AddProductItemsBinding
 import com.tulsidistributors.tdemployee.databinding.FragmentAddProductListBinding
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductData
 
-class AddProductAdapter(val productItem: ArrayList<DealerProductData>,val listner:AddProductItemClickListner) :
+class AddProductAdapter(
+    val productItem: ArrayList<DealerProductData>,
+    val listner: AddProductItemClickListner
+) :
     RecyclerView.Adapter<AddProductAdapter.AddProduct_VH>() {
 
-    lateinit var binding:AddProductItemsBinding
+    lateinit var binding: AddProductItemsBinding
 
     class AddProduct_VH(binding: AddProductItemsBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -30,31 +34,31 @@ class AddProductAdapter(val productItem: ArrayList<DealerProductData>,val listne
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddProduct_VH {
-         binding =
+        binding =
             AddProductItemsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return AddProduct_VH(binding)
     }
 
     override fun onBindViewHolder(holder: AddProduct_VH, position: Int) {
-        holder.brandName.text = productItem.get(position).product_name
+
+        val productName = productItem.get(position).product_name
+        val productPrice = productItem.get(position).basic_amount
+        val brandId = productItem.get(position).brand_id
+
+        holder.addProductBtn.text = "ADD"
+
+        holder.brandName.text = productName
         holder.productDrescription.text = productItem.get(position).description
-        holder.productPrice.text = "Rs ${productItem.get(position).basic_amount}"
+        holder.productPrice.text = "Rs ${productPrice}"
 
         var productQty = holder.productQtyTxt.text.toString().toInt()
 
 
-        holder.addProductBtn.setOnClickListener {
-
-            listner.addButtonClicked(position = position,productQty)
-
-
-
-        }
 
         holder.minusBtn.setOnClickListener {
-            if (productQty>1){
+            if (productQty > 1) {
                 productQty--
-                listner.minusButtonClicked(position = position,productQty,holder.productQtyTxt)
+                listner.minusButtonClicked(position = position, productQty, holder.productQtyTxt)
 
             }
 
@@ -62,12 +66,23 @@ class AddProductAdapter(val productItem: ArrayList<DealerProductData>,val listne
 
         holder.plusBtn.setOnClickListener {
             productQty++
-            listner.plusButtonClicked(position = position,productQty,holder.productQtyTxt)
+            listner.plusButtonClicked(position = position, productQty, holder.productQtyTxt)
         }
 
         holder.constriantQuantity.setOnClickListener {
 
             listner.openDialogBox(holder.oldQnty, position)
+        }
+
+        holder.addProductBtn.setOnClickListener {
+            listner.onAddButtonClicked(
+                holder.addProductBtn,
+                position = position,
+                prodactName = productName,
+                prodctQuantity = productQty,
+                productPice = productPrice,
+                brandId = brandId
+            )
         }
     }
 
@@ -77,9 +92,16 @@ class AddProductAdapter(val productItem: ArrayList<DealerProductData>,val listne
 
 }
 
-interface AddProductItemClickListner{
-    fun addButtonClicked(position:Int,productQty:Int)
-    fun plusButtonClicked(position:Int,productQty:Int,productQtyTxt: TextView)
-    fun minusButtonClicked(position:Int,productQty:Int,productQtyTxt: TextView)
-    fun openDialogBox(oldQnty:TextView,position: Int)
+interface AddProductItemClickListner {
+    fun plusButtonClicked(position: Int, productQty: Int, productQtyTxt: TextView)
+    fun minusButtonClicked(position: Int, productQty: Int, productQtyTxt: TextView)
+    fun openDialogBox(oldQnty: TextView, position: Int)
+    fun onAddButtonClicked(
+        addBtn: Button,
+        position: Int,
+        prodactName: String,
+        prodctQuantity: Int,
+        productPice: String,
+        brandId: String
+    )
 }

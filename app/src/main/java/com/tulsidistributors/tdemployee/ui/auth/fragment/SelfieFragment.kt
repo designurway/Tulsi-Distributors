@@ -87,11 +87,11 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
 
-        //initalize the LocationRequest
-        locationRequest = LocationRequest.create()
-        locationRequest.interval = 500
-        locationRequest.fastestInterval = 500
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            //initalize the LocationRequest
+            locationRequest = LocationRequest.create()
+            locationRequest.interval = 500
+            locationRequest.fastestInterval = 500
+            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
         getLocation()
 

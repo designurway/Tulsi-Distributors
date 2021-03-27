@@ -10,7 +10,8 @@ data class DealerProductData(
     val description:String,
     val product_image:String,
     val brand_id:String,
-    var quantity:Int
+    var quantity:Int,
+    var buttonTxt:String= "Add"
 
 
 )

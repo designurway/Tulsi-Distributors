@@ -65,9 +65,26 @@
         android:textSize="15sp"
         android:layout_marginRight="10dp"
         android:textColor="@color/black"
-        android:background="@drawable/edit_profile_bg"
+        android:background="@drawable/btn_bg"
         android:backgroundTint="@color/white"
+        android:padding="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Products"
+        android:textSize="15sp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/black"
+        android:background="@drawable/btn_bg"
+        android:backgroundTint="@color/white"
+        android:padding="2dp"
+        app:layout_goneMarginRight="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/show_btn"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

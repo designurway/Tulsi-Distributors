@@ -6,21 +6,21 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.ActivityHomePageBinding
 import com.tulsidistributors.tdemployee.utils.NavToolbarController
+import java.util.*
 
-class HomePageActivity : AppCompatActivity(),NavToolbarController {
+class HomePageActivity : AppCompatActivity(), NavToolbarController {
 
-    lateinit var homeToolbar:Toolbar
+    lateinit var homeToolbar: Toolbar
 
     lateinit var binding: ActivityHomePageBinding
     lateinit var bottonNav: BottomNavigationView
@@ -52,8 +52,6 @@ class HomePageActivity : AppCompatActivity(),NavToolbarController {
                 homeToolbar.visibility = GONE
             }*/
         }
-
-
     }
 
     override fun hideToolBar() {
@@ -63,7 +61,6 @@ class HomePageActivity : AppCompatActivity(),NavToolbarController {
     override fun showToolbar() {
         homeToolbar.visibility = VISIBLE
     }
-
 
 
 }

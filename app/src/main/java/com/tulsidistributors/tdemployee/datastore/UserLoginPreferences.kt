@@ -47,7 +47,7 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
 
     }
 
-    suspend fun logout(){
+     suspend fun logout(){
         mDataStore.edit {
             it.clear()
         }

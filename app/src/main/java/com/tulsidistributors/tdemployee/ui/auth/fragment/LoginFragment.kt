@@ -57,7 +57,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loginPrefrence = UserLoginPreferences(requireActivity()!!.dataStore)
+        loginPrefrence = UserLoginPreferences(requireActivity().dataStore)
 
         forgotPass = binding.forgotPassTxt
         loginEmpId = binding.emailEt
