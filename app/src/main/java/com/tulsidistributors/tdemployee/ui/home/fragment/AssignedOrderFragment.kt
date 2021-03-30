@@ -5,25 +5,30 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
 import com.tulsidistributors.tdemployee.databinding.FragmentAssignedOrderBinding
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderData
 import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderModel
 import com.tulsidistributors.tdemployee.ui.adapter.AssignedOrderAdapter
 import com.tulsidistributors.tdemployee.ui.adapter.AssignedOrderClicked
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -42,6 +47,8 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
     var shopLong: Double = 76.64457088158639
     var curLong: Double = 0.0
     var curLat: Double = 0.0
+     lateinit var EmpId:String
+    lateinit var userLoginPreferences: UserLoginPreferences
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -56,6 +63,11 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
+
+        getUserDetails()
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
@@ -74,11 +86,16 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
         val layoutManager = LinearLayoutManager(requireContext())
         assignedOrderRecyclerView.layoutManager = layoutManager
 
+    }
 
+
+
+    private fun getAssignedOrder(empId:String){
+//        showToast(requireContext(),"$EmpId")
         CoroutineScope(Dispatchers.Main).launch {
 
             try {
-                val response = getAssignedOder("TD001")
+                val response = getAssignedOderApiCall(empId)
                 if (response.isSuccessful) {
                     val data = response.body()
                     val assignedOrder: ArrayList<AssignedOrderData> = data!!.assigned_order
@@ -98,13 +115,11 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
                 ).show()
             }
         }
-
-
     }
 
-    suspend private fun getAssignedOder(empId: String): Response<AssignedOrderModel> {
+    suspend private fun getAssignedOderApiCall(empId: String): Response<AssignedOrderModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getAssignedOrder("TD001")
+            BaseClient.getInstance.getAssignedOrder(empId)
         }
     }
 
@@ -218,5 +233,14 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
             Looper.getMainLooper()
         )
     }
+
+    private fun getUserDetails(){
+        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner,{
+            EmpId = it.toString()
+
+            getAssignedOrder(EmpId)
+        })
+    }
+
 
 }

@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.tulsidistributors.tdemployee.databinding.FragmentUpdateProfileBinding
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
@@ -41,6 +42,10 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
     lateinit var updateNameEt: EditText
     lateinit var updateImgBtn: Button
     var selectedImage: Uri? = null
+    lateinit var name:String
+    lateinit var imageUrl:String
+
+    private val args:UpdateProfileFragmentArgs by navArgs()
 
     companion object {
         private const val REQUEST_CODE_IMAGE_PICKER = 100
@@ -64,13 +69,21 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
         updateNameEt = bindinig.updateNameEt
         updateImgBtn = bindinig.updateImgBtn
 
+        name = args.name
+        imageUrl = args.imageUrl
+
+        updateNameEt.setText(name)
+
 
         profileImg.setOnClickListener {
             openImageChooser()
         }
 
         updateImgBtn.setOnClickListener {
-            uploadProfileImage()
+
+            name = updateNameEt.text.toString().trim()
+
+            uploadProfileImage(name)
 
 
         }
@@ -102,10 +115,10 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
     }
 
 
-    private fun uploadProfileImage() {
+    private fun uploadProfileImage(name:String) {
 
         if (selectedImage == null) {
-            requireActivity().showToast("Image is not selected")
+           showToast(requireContext(),"Image is not selected")
             return
         }
 
@@ -131,7 +144,7 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
         viewLifecycleOwner.lifecycleScope.launch {
 
             try {
-                val response = profileUpdateApiCall(fileName = fileName,body=body)
+                val response = profileUpdateApiCall(fileName = fileName,body=body,name=name)
 
                 if (response.isSuccessful) {
                     val responseData = response.body()
@@ -163,7 +176,8 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
 
     private suspend fun profileUpdateApiCall(
         fileName: String,
-        body: UploadImageRequestBody
+        body: UploadImageRequestBody,
+        name: String
     ): Response<StatusMessageModel> {
 
 
@@ -173,7 +187,7 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
                 "8755420120".toRequestBody(
                     "multipart/form-data".toMediaTypeOrNull()
                 ),
-                "lathesh".toRequestBody(
+                name.toRequestBody(
                     "multipart/form-data".toMediaTypeOrNull()
                 )
 

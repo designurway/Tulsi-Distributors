@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -23,14 +24,19 @@ import com.designurway.tdapplication.adapter.SelectedProductAdapter
 import com.designurway.tdapplication.model.SelectedProductModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tulsidistributors.tdemployee.R
-import com.tulsidistributors.tdemployee.dataModel
 import com.tulsidistributors.tdemployee.databinding.*
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
+import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductData
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductModel
+import com.tulsidistributors.tdemployee.model.place_order_model.PlaceOrderData
+import com.tulsidistributors.tdemployee.model.place_order_model.PlaceOrderModel
 import com.tulsidistributors.tdemployee.ui.adapter.AddProductAdapter
 import com.tulsidistributors.tdemployee.ui.adapter.AddProductItemClickListner
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
+import com.tulsidistributors.tdemployee.utils.Common
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,11 +50,13 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     lateinit var productRecycler: RecyclerView
     lateinit var show_btn: AppCompatButton
     val list: ArrayList<SelectedProductModel> = ArrayList()
-    var id: String = ""
+    var placeOderList: ArrayList<PlaceOrderData> = ArrayList()
+
+    var dealer_id: String = ""
     var shop_address: String = ""
     var shopName: String = ""
-    var totalQty: Int = 0
-    var total: Int = 0
+    var totalPrice: Int = 0
+    var totalQuantity: Int = 0
     lateinit var oldQntyTv: TextView
     var bottomSheetDialog: BottomSheetDialog? = null
     lateinit var productItem: ArrayList<DealerProductData>
@@ -57,6 +65,10 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     lateinit var textviewItem: TextView
     lateinit var body: EditText
     var qnt: String? = null
+    lateinit var userLoginPrefrence: UserLoginPreferences
+    lateinit var saleExectiveId: String
+    lateinit var refrenceId:String
+    lateinit var empId:String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +88,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        id = args.dealerId
+        dealer_id = args.dealerId
         shop_address = args.address
         shopName = args.shopName
 
@@ -86,6 +98,12 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         binding.shopAddressTv.text = shop_address
         binding.shopNameTv.text = shopName
 
+        refrenceId = "Refno${Common(requireContext()).generateRandomNumber()}"
+
+
+        userLoginPrefrence = UserLoginPreferences(requireActivity().dataStore)
+
+        getLoginDetails()
 
         val layoutManager = LinearLayoutManager(requireContext())
         productRecycler.layoutManager = layoutManager
@@ -93,9 +111,9 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         binding.addProdSearch.searchItemEt.doOnTextChanged { text, start, before, count ->
 
             if (text!!.length >= 2) {
-                searchDealerProductItem(id, searchQuery = text.toString())
+                searchDealerProductItem(dealer_id, searchQuery = text.toString())
             } else {
-                getDealerProductItem(id)
+                getDealerProductItem(dealer_id)
             }
         }
 
@@ -103,9 +121,10 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
             openAddedItemBottomSheet()
         }
 
-        getDealerProductItem(id)
+        getDealerProductItem(dealer_id)
 
     }
+
 
     private fun openAddedItemBottomSheet() {
         bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.BottomSheetTheme)
@@ -116,14 +135,15 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         val bottomSheetRecycler = binding.listSelectedRv
         val quantity = binding.quantityTv
         val totalAmount = binding.totalTv
+        val confirmOrder = binding.confirmOrder
 
         quantity.text = "Qnty: ${list.size}"
 
         for (i in 0..list.size - 1) {
-            total += list.get(i).proPrice.toInt()
+            totalPrice += list.get(i).proPrice.toInt()
         }
 
-        totalAmount.text = "Total: ${total}"
+        totalAmount.text = "Total: ${totalPrice}"
 
         selectedProductAdapter = SelectedProductAdapter(list, requireContext())
 
@@ -133,57 +153,117 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         bottomSheetDialog?.setContentView(binding.root)
         bottomSheetDialog?.show()
 
-        val simpleItemTouchCallBack:ItemTouchHelper.SimpleCallback = object :RecyclerViewSwipeCallback(requireContext()){
+        val simpleItemTouchCallBack: ItemTouchHelper.SimpleCallback =
+            object : RecyclerViewSwipeCallback(requireContext()) {
 
-            override fun onMove(
-                list_selected_rv: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
+                override fun onMove(
+                    list_selected_rv: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            position = viewHolder.adapterPosition
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    position = viewHolder.adapterPosition
 
-                textviewItem = viewHolder.itemView.findViewById<TextView>(R.id.qnty_tvItem)
+                    textviewItem = viewHolder.itemView.findViewById<TextView>(R.id.qnty_tvItem)
 
+                    if (direction == ItemTouchHelper.RIGHT) {
 
-                if (direction == ItemTouchHelper.RIGHT) {
-
-                    showDialogForSelectedItem(binding,position!!)
-
-                    selectedProductAdapter?.notifyDataSetChanged()
-
-                } else {
+                        showDialogForSelectedItem(binding, position!!)
 
 
-                    productItem[list.get(position!!).position].buttonTxt = "Add"
-                    selectedProductAdapter?.notifyDataSetChanged()
-                    productRecycler.adapter?.notifyItemChanged(list.get(position!!).position)
-                    list.removeAt(position!!)
-                    quantity.text = "Qnty" + list.size.toString()
-                    total = 0
-                    for (i in 0..list.size - 1) {
-                        total += list.get(i).proPrice.toInt()
+                    } else {
+
+
+                        productItem[list.get(position!!).position].buttonTxt = "Add"
+                        selectedProductAdapter?.notifyDataSetChanged()
+                        productRecycler.adapter?.notifyItemChanged(list.get(position!!).position)
+                        list.removeAt(position!!)
+                        quantity.text = "Qnty" + list.size.toString()
+                        totalPrice = 0
+                        for (i in 0..list.size - 1) {
+                            totalPrice += list.get(i).proPrice.toInt()
+                        }
+
+                        totalAmount.text = "Total:" + totalPrice.toString()
+
                     }
-
-                    totalAmount.text = "Total:" + total.toString()
 
                 }
 
             }
 
-        }
-
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallBack)
         itemTouchHelper.attachToRecyclerView(bottomSheetRecycler)
 
-        getDealerProductItem(id)
+        getDealerProductItem(dealer_id)
+
+
+
+        confirmOrder.setOnClickListener {
+
+
+
+            Toast.makeText(requireContext(), "Refrence Id $refrenceId", Toast.LENGTH_SHORT).show()
+
+            placeOrder()
+        }
 
 
     }
 
+    private fun placeOrder() {
+
+        val placeOrderModel = PlaceOrderModel(
+            refrenceId,
+            dealer_id,
+            totalPrice.toString(),
+            "500",
+        "100",
+            placeOderList
+        )
+
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = placeOrderApiCall(placeOrderModel)
+
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    Toast.makeText(requireContext(), "${responseData!!.message}", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Response Message ${response.message()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            } catch (e: java.lang.Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Execption Occured ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+
+    private suspend fun placeOrderApiCall(placeOrderModel:PlaceOrderModel): Response<StatusMessageModel> {
+
+        return withContext(Dispatchers.IO) {
+
+
+            BaseClient.getInstance.placeOrder(
+               placeOrderModel
+            )
+        }
+    }
 
     private fun getDealerProductItem(dealerId: String) {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -226,7 +306,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
     private suspend fun getDealerProductItemApiCall(dealerId: String): Response<DealerProductModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getDealerProductItem("1", "TD001")
+            BaseClient.getInstance.getDealerProductItem(dealer_id, empId)
         }
     }
 
@@ -273,7 +353,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         searchQuery: String
     ): Response<DealerProductModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.searchDealerProductItem("1", searchQuery, "TD001")
+            BaseClient.getInstance.searchDealerProductItem(dealer_id, searchQuery, empId)
         }
     }
 
@@ -319,7 +399,8 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         prodactName: String,
         prodctQuantity: Int,
         productPice: String,
-        brandId: String
+        brandId: String,
+        productId: String
     ) {
 
         addBtn.text = "Already Added"
@@ -334,6 +415,19 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                     brandId,
                     position,
                     productPice.toInt()
+                )
+
+
+            )
+
+            placeOderList.add(
+                PlaceOrderData(
+                    saleExectiveId,
+                    productId,
+                    refrenceId,
+                    dealer_id,
+                    "59",
+                    totalQuantity.toString()
                 )
             )
 
@@ -352,8 +446,21 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                         productPice,
                         brandId,
                         position,
-                        productPice.toInt())
+                        productPice.toInt()
+                    )
                 )
+
+                placeOderList.add(
+                    PlaceOrderData(
+                        saleExectiveId,
+                        productId,
+                        refrenceId,
+                        dealer_id,
+                        "59",
+                        totalQuantity.toString()
+                    )
+                )
+
             } else {
                 Toast.makeText(requireContext(), "Already added", Toast.LENGTH_LONG).show()
             }
@@ -392,11 +499,13 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     }
 
 
-    private fun showDialogForSelectedItem( binding: FragmentBottomSheetListProductBinding,Position:Int) {
+    private fun showDialogForSelectedItem(
+        binding: FragmentBottomSheetListProductBinding,
+        Position: Int
+    ) {
 
-        var qtyTxt = binding.qntyTv
+        var qtyTxt = binding.quantityTv
         var totalTxt = binding.totalTv
-
 
 
         val dialog = Dialog(requireContext())
@@ -416,25 +525,27 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
             dialog.dismiss()
 
             qnt = body.text.toString()
-            if (position!=null){
+            if (position != null) {
 
                 list.get(position!!).proQnty = qnt!!
-                val price=qnt!!.toInt()*(list.get(position!!).secondPrice)
-                list.get(position!!).proPrice=price.toString()
+                val price = qnt!!.toInt() * (list.get(position!!).secondPrice)
+                list.get(position!!).proPrice = price.toString()
                 selectedProductAdapter?.notifyDataSetChanged()
 
+                placeOderList[position!!].order_quantity = qnt!!
+
 
             }
-            total=0
-            var totalqnt=0
+            totalPrice = 0
+
             for (i in 0..list.size - 1) {
 
-                total += list.get(i).proPrice.toInt()
-                totalqnt += list.get(i).proQnty.toInt()
+                totalPrice += list.get(i).proPrice.toInt()
+                totalQuantity += list.get(i).proQnty.toInt()
 
             }
-            totalTxt.text = "Total:" + total.toString()
-            qtyTxt.text="Qty:"+totalqnt.toString()
+            totalTxt.text = "Total:" + totalPrice.toString()
+            qtyTxt.text = "Qty:" + totalQuantity.toString()
 
         }
         noBtn.setOnClickListener {
@@ -445,6 +556,16 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
     }
 
+    private fun getLoginDetails() {
+        userLoginPrefrence.saleExecutiveIdFlow.asLiveData().observe(viewLifecycleOwner) {
+            saleExectiveId = it.toString()
+
+        }
+
+        userLoginPrefrence.empIdFlow.asLiveData().observe(viewLifecycleOwner){
+            empId = it.toString()
+        }
+    }
 
 
 }

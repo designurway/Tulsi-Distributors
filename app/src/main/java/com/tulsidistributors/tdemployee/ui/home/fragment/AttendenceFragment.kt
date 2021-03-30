@@ -9,12 +9,20 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.datastore.dataStore
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.databinding.FragmentAttendenceBinding
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.attendance.AttendanceModel
+import com.tulsidistributors.tdemployee.model.user_detail.UserDetailModel
+import com.tulsidistributors.tdemployee.utils.Common
+import com.tulsidistributors.tdemployee.utils.GetUserDetails
 import com.tulsidistributors.tdemployee.utils.TimeDiffrence
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,7 +38,12 @@ class AttendenceFragment : Fragment() {
     lateinit var binding: FragmentAttendenceBinding
     lateinit var date_cv: CardView
     lateinit var date__tv: TextView
-    lateinit var selectedDate: String;
+    lateinit var selectedDate: String
+    lateinit var name:String
+    lateinit var imageUrl:String
+    lateinit var userLoginPreferences: UserLoginPreferences
+    lateinit var empId:String
+    lateinit var getLoginDetails:GetUserDetails
 
 
     override fun onCreateView(
@@ -49,10 +62,15 @@ class AttendenceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+//        getLoginDetails()
+
+
+
         date_cv = binding.dateCv
         date__tv = binding.dateTv
 
 
+        getLoginDetails = GetUserDetails(UserLoginPreferences(requireActivity().dataStore),viewLifecycleOwner)
 
         date_cv.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -67,11 +85,16 @@ class AttendenceFragment : Fragment() {
                 DatePickerDialog.OnDateSetListener { view, Year, Month, dayOfMonth ->
 
                     //Date format
-                    selectedDate = "$dayOfMonth-${(Month + 1)}-$Year"
+                    if (Month<10){
+                        selectedDate = "$dayOfMonth-0${(Month + 1)}-$Year"
+                    }else{
+                        selectedDate = "$dayOfMonth-${(Month + 1)}-$Year"
+                    }
+
 
                     date__tv.setText(dayOfMonth.toString() + "/" + (Month + 1) + "/" + Year)
 
-                    getAttandance("Emp", selectedDate)
+                    getAttandance(getLoginDetails.getEmpId(), selectedDate)
 
                     Toast.makeText(requireContext(), "selected date $selectedDate", Toast.LENGTH_SHORT).show()
 
@@ -83,12 +106,13 @@ class AttendenceFragment : Fragment() {
         }
 
         binding.totalTime.setOnClickListener {
-            Toast.makeText(requireContext(), "Date : $selectedDate", Toast.LENGTH_SHORT).show()
+
+            showToast(requireContext(), Common(requireContext()).getCurrentDate())
+
+
         }
 
-
-
-        getAttandance("Emp", "22-3-2021")
+        getAttandance(getLoginDetails.getEmpId(),  Common(requireContext()).getCurrentDate())
 
 
     }
@@ -165,9 +189,61 @@ class AttendenceFragment : Fragment() {
         date: String
     ): Response<AttendanceModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getAttendance("TD002", date)
+            BaseClient.getInstance.getAttendance(empId,date)
         }
     }
 
+
+    private fun getUserDetail() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            try {
+                val response = getUserDetailApiCall()
+
+                if (response.isSuccessful) {
+
+                    val responseData = response.body()
+                    if (responseData!!.status.equals("1")){
+
+                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
+
+                        name = responseData.first_name
+
+                        binding.attendName.text = name
+                        binding.attendEmail.text = responseData.email_id
+                        imageUrl = "${responseData.profile}"
+//                        Glide.with(requireView()).load(imageUrl).into(binding.profileImg)
+                    }else{
+                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Response Message ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Exception Occured ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+    }
+
+    private suspend fun getUserDetailApiCall(): Response<UserDetailModel> {
+        return withContext(Dispatchers.IO) {
+            BaseClient.getInstance.getUserDetails("TD001")
+        }
+    }
+
+
+  /*  private fun getLoginDetails(){
+        Toast.makeText(requireContext(), "Method Called", Toast.LENGTH_SHORT).show()
+        val userDetails = GetUserDetails(UserLoginPreferences(requireActivity().dataStore),viewLifecycleOwner)
+
+        empId=userDetails.getEmpId()
+    }*/
 
 }

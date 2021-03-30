@@ -44,6 +44,7 @@ class AddProductAdapter(
         val productName = productItem.get(position).product_name
         val productPrice = productItem.get(position).basic_amount
         val brandId = productItem.get(position).brand_id
+        val productId = productItem.get(position).product_id
 
         holder.addProductBtn.text = "ADD"
 
@@ -81,7 +82,8 @@ class AddProductAdapter(
                 prodactName = productName,
                 prodctQuantity = productQty,
                 productPice = productPrice,
-                brandId = brandId
+                brandId = brandId,
+                product_id = productId
             )
         }
     }
@@ -102,6 +104,7 @@ interface AddProductItemClickListner {
         prodactName: String,
         prodctQuantity: Int,
         productPice: String,
-        brandId: String
+        brandId: String,
+        product_id:String
     )
 }

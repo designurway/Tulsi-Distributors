@@ -19,6 +19,7 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
 
     companion object {
         val EMP_ID = stringPreferencesKey("empId")
+        val SaleExecutive_ID = stringPreferencesKey("SaleExecutive_ID")
         val DISTRIBUTOR_ID = stringPreferencesKey("distributor_id")
         val EMAIL = stringPreferencesKey("email")
         val PHONE = stringPreferencesKey("phone_number")
@@ -28,14 +29,16 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
     }
 
     suspend fun saveUserLoginDetail(
+        sale_executive_id: String,
         empId: String,
         distributor_id: String,
         email: String,
         phone: String,
-        role:String
+        role: String
     ) {
 
         mDataStore.edit { preferences ->
+            preferences[SaleExecutive_ID] = sale_executive_id
             preferences[EMP_ID] = empId
             preferences[DISTRIBUTOR_ID] = distributor_id
             preferences[EMAIL] = email
@@ -47,10 +50,14 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
 
     }
 
-     suspend fun logout(){
+    suspend fun logout() {
         mDataStore.edit {
             it.clear()
         }
+    }
+
+    val saleExecutiveIdFlow: Flow<String?> = mDataStore.data.map {
+        it[SaleExecutive_ID]
     }
 
     val empIdFlow: Flow<String?> = mDataStore.data.map { preferences ->
@@ -58,11 +65,11 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
 
     }
 
-    val distributorIdFlow:Flow<String?> = mDataStore.data.map {
-            it[DISTRIBUTOR_ID]
+    val distributorIdFlow: Flow<String?> = mDataStore.data.map {
+        it[DISTRIBUTOR_ID]
     }
 
-    val emailFlow:Flow<String?> = mDataStore.data.map { preferences->
+    val emailFlow: Flow<String?> = mDataStore.data.map { preferences ->
         preferences[EMAIL]
     }
 }

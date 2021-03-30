@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
     lateinit var loginEmpId: EditText
     lateinit var loginPassword: EditText
     lateinit var loginSubmit: ImageView
-    lateinit var loginPrefrence:UserLoginPreferences
+    lateinit var loginPrefrence: UserLoginPreferences
 
     lateinit var telephonyManager: TelephonyManager
     lateinit var imeiNumber: String
@@ -65,10 +65,8 @@ class LoginFragment : Fragment() {
         loginSubmit = binding.signBtn!!
 
         forgotPass.setOnClickListener {
-             /*val action = LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment()
-             view.findNavController().navigate(action)*/
-
-            getLoginData()
+            val action = LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment()
+            view.findNavController().navigate(action)
 
         }
 
@@ -100,6 +98,7 @@ class LoginFragment : Fragment() {
 
                             //Saveing LoginDetail In DataStore
                             val emp_id = data!!.data.emp_id
+                            val sale_executive_id = data!!.data.id
                             val distributor_id = data.data.distributor_id
                             val email = data.data.email
                             val phone_number = data.data.phone_number
@@ -107,6 +106,7 @@ class LoginFragment : Fragment() {
 
 
                             loginPrefrence.saveUserLoginDetail(
+                                sale_executive_id = sale_executive_id,
                                 empId = emp_id,
                                 distributor_id = distributor_id,
                                 email = email,

@@ -5,15 +5,15 @@ import com.tulsidistributors.tdemployee.model.admin_brand.AdminBrandModel
 import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderModel
 import com.tulsidistributors.tdemployee.model.attendance.AttendanceModel
 import com.tulsidistributors.tdemployee.model.completed_order.CompletedOderModel
-import com.tulsidistributors.tdemployee.model.completed_order.CompletedOrderData
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductModel
 import com.tulsidistributors.tdemployee.model.login.LoginModel
+import com.tulsidistributors.tdemployee.model.place_order_model.PlaceOrderModel
 import com.tulsidistributors.tdemployee.model.placed_order_list.PlacedOrderListModel
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
+import com.tulsidistributors.tdemployee.model.user_detail.UserDetailModel
 import com.tulsidistributors.tdemployee.ui.home.fragment.models.NotificationDataModel
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -67,53 +67,53 @@ interface TDApi {
 
     @GET("getAttendance")
     suspend fun getAttendance(
-        @Query("empId") empId:String,
-        @Query("date") date:String
+        @Query("empId") empId: String,
+        @Query("date") date: String
     ): Response<AttendanceModel>
 
     @GET("getAdminBrandList")
-    suspend fun getAdminBrandList():Response<AdminBrandModel>
+    suspend fun getAdminBrandList(): Response<AdminBrandModel>
 
     @GET("searchAdminBrand")
     suspend fun searchAdimItem(
-        @Query("search") search:String
-    ):Response<AdminBrandModel>
+        @Query("search") search: String
+    ): Response<AdminBrandModel>
 
     @GET("stockItemList")
     suspend fun getStockItem(
-        @Query("brandName") brandName:String,
-    ):Response<SearchStockItemModel>
+        @Query("brandName") brandName: String,
+    ): Response<SearchStockItemModel>
 
     @GET("searchStockItem")
     suspend fun getStockItemList(
-        @Query("brandName") brandName:String,
-        @Query("search") search:String,
-    ):Response<SearchStockItemModel>
+        @Query("brandName") brandName: String,
+        @Query("search") search: String,
+    ): Response<SearchStockItemModel>
 
     @FormUrlEncoded
     @POST("postSupportQuery")
     suspend fun postQuery(
         @Field("emp_id") empId: String,
-        @Field("message") message:String
-    ):Response<StatusMessageModel>
+        @Field("message") message: String
+    ): Response<StatusMessageModel>
 
     @GET("getNotification")
     suspend fun getNotification(
         @Query("emp_id") empId: String
-    ):Response<NotificationDataModel>
+    ): Response<NotificationDataModel>
 
     @GET("getDealerProductItem")
     suspend fun getDealerProductItem(
-        @Query("dealer_id") dealer_id:String,
-        @Query("empId") empId:String
-    ):Response<DealerProductModel>
+        @Query("dealer_id") dealer_id: String,
+        @Query("empId") empId: String
+    ): Response<DealerProductModel>
 
     @GET("searchDealerProductItem")
     suspend fun searchDealerProductItem(
-        @Query("dealer_id") dealer_id:String,
-        @Query("search") search:String,
-        @Query("empId") empId:String
-    ):Response<DealerProductModel>
+        @Query("dealer_id") dealer_id: String,
+        @Query("search") search: String,
+        @Query("empId") empId: String
+    ): Response<DealerProductModel>
 
     @Multipart
     @POST("updateProfileImage")
@@ -127,15 +127,36 @@ interface TDApi {
     @POST("uploadSelfie")
     suspend fun uploadSelfie(
         @Part image: MultipartBody.Part,
-        @Part("saleExecutiveId") saleExecutiveId:RequestBody,
-        @Part("loginDate")loginDate:RequestBody,
-        @Part("latitude")latitude:RequestBody,
-        @Part("longitude") longitude:RequestBody
+        @Part("saleExecutiveId") saleExecutiveId: RequestBody,
+        @Part("loginDate") loginDate: RequestBody,
+        @Part("latitude") latitude: RequestBody,
+        @Part("longitude") longitude: RequestBody
     ): Response<StatusMessageModel>
 
     @GET("getPlacedOrderList")
     suspend fun getPlacedOrderList(
-        @Query("dealer_id") dealer_id:String,
-        @Query("date") date:String
-    ):Response<PlacedOrderListModel>
+        @Query("dealer_id") dealer_id: String,
+        @Query("date") date: String
+    ): Response<PlacedOrderListModel>
+
+
+    @POST("placeOrder")
+    suspend fun placeOrder(
+
+        @Body order_item: PlaceOrderModel
+    ): Response<StatusMessageModel>
+
+
+    @GET("getUserDetails")
+    suspend fun getUserDetails(
+        @Query("emp_id") emp_id:String
+    ):Response<UserDetailModel>
+
+    @FormUrlEncoded
+    @POST("postNotificationToken")
+    suspend fun uploadNotifationToken(
+        @Field("emp_id") emp_id:String,
+        @Field("token") token:String
+    ):Response<StatusMessageModel>
 }
+

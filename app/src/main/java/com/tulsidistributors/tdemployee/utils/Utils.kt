@@ -2,10 +2,13 @@ package com.tulsidistributors.tdemployee.utils
 
 import android.app.Activity
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import com.leo.simplearcloader.ArcConfiguration
+import com.leo.simplearcloader.SimpleArcDialog
 
 fun View.snackbar(message: String) {
     Snackbar.make(
@@ -19,9 +22,19 @@ fun View.snackbar(message: String) {
     }.show()
 }
 
-fun Activity.showToast(message: String){
+fun SimpleArcLoader(context: Context,message:String,isCanclable:Boolean){
+    val mDialog = SimpleArcDialog(context)
+    val arcConfiguration = ArcConfiguration(context)
+    arcConfiguration.loaderStyle = com.leo.simplearcloader.SimpleArcLoader.STYLE.SIMPLE_ARC
+    arcConfiguration.text = message
+    mDialog.setConfiguration(arcConfiguration)
+    mDialog.setCanceledOnTouchOutside(isCanclable)
+    mDialog.show()
+}
 
-    android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
+fun showToast(context: Context,message: String){
+
+    android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
 }
 
 fun ContentResolver.getFileName(uri:Uri):String{
@@ -37,3 +50,4 @@ fun ContentResolver.getFileName(uri:Uri):String{
     return name
 
 }
+

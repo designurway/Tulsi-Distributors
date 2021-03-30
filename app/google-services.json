@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "405278094638",
+    "project_id": "tulsi-distributors-employee",
+    "storage_bucket": "tulsi-distributors-employee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405278094638:android:4f7555307ecca3077236bf",
+        "android_client_info": {
+          "package_name": "com.tulsidistributors.tdemployee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "405278094638-gpf6anl6g34bkelob7fo3c1qkf571i46.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCduYreZhP_KXVbKuiNUexsUKJCfNlg6VA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "405278094638-gpf6anl6g34bkelob7fo3c1qkf571i46.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

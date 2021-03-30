@@ -1,19 +1,13 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment
 
 import android.Manifest
-import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Looper
 import android.provider.MediaStore
-import android.provider.MediaStore.Video.query
-import android.provider.OpenableColumns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,15 +16,25 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
-import com.tulsidistributors.tdemployee.R
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
+import com.leo.simplearcloader.ArcConfiguration
+import com.leo.simplearcloader.SimpleArcDialog
+import com.leo.simplearcloader.SimpleArcLoader
 import com.tulsidistributors.tdemployee.databinding.FragmentSelfieBinding
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
+import com.tulsidistributors.tdemployee.utils.SimpleArcLoader
 import com.tulsidistributors.tdemployee.utils.UploadImageRequestBody
 import com.tulsidistributors.tdemployee.utils.getFileName
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,10 +45,6 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.lang.Exception
-import java.net.URI
-import java.security.Permission
-import java.security.Permissions
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -65,7 +65,9 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var msettingsClient: SettingsClient
     private lateinit var locationCallback: LocationCallback
-
+    lateinit var userLoginPreferences: UserLoginPreferences
+    lateinit var empId: String
+    lateinit var token:String
 
     companion object {
         private const val CAMERA_PREMISSION_CODE = 1
@@ -84,16 +86,23 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
+
+        getUserDetail()
+
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
 
-            //initalize the LocationRequest
-            locationRequest = LocationRequest.create()
-            locationRequest.interval = 500
-            locationRequest.fastestInterval = 500
-            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        //initalize the LocationRequest
+        locationRequest = LocationRequest.create()
+        locationRequest.interval = 500
+        locationRequest.fastestInterval = 500
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
         getLocation()
+
+
 
         binding.selfieImage.setOnClickListener {
 
@@ -117,8 +126,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
             /* val intent = Intent(requireContext(), HomePageActivity::class.java)
              startActivity(intent)*/
 
-
             if (uri != null && !uri!!.equals(Uri.EMPTY)) {
+                generateToken()
                 uploadSelfie()
             } else {
                 Toast.makeText(requireContext(), "Select Image", Toast.LENGTH_SHORT).show()
@@ -130,7 +139,59 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
     }
 
+    private fun generateToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+              showToast(requireContext(),"Fetching FCM registration token failed")
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+             token = task.result
+
+
+            showToast(requireContext(),token)
+
+            uploadNotifationToken(token)
+        })
+
+    }
+
+
+
+    private fun uploadNotifationToken(token: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val resposne = uploadNotificationTokenApiCall(token)
+
+                if (resposne.isSuccessful) {
+                    val responseData = resposne.body()
+                    showToast(requireContext(), responseData!!.message)
+                } else {
+                    showToast(requireContext(), "Response Message ${resposne.message()}")
+                }
+            } catch (e: java.lang.Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Exception Occured ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private suspend fun uploadNotificationTokenApiCall(token:String): Response<StatusMessageModel> {
+        return withContext(Dispatchers.IO) {
+            BaseClient.getInstance.uploadNotifationToken(emp_id = empId, token = token)
+        }
+    }
+
+
+
     private fun uploadSelfie() {
+
+        SimpleArcLoader(requireContext(), "Uploading..", false)
+
         val parcelFileDescriptor = requireContext().contentResolver.openFileDescriptor(
             uri!!, "r", null
         ) ?: return
@@ -185,7 +246,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         body: UploadImageRequestBody
     ): Response<StatusMessageModel> {
 
-        Toast.makeText(requireContext(), "Upload Selife $latitude $longtitude", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Upload Selife $latitude $longtitude", Toast.LENGTH_SHORT)
+            .show()
 
         val sdf = SimpleDateFormat("dd-M-yyyy", Locale.UK)
         val currentDate = sdf.format(Date())
@@ -193,7 +255,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         return withContext(Dispatchers.IO) {
             BaseClient.getInstance.uploadSelfie(
                 MultipartBody.Part.createFormData("profileImg", fileName, body),
-                "TD001".toRequestBody(
+                empId.toRequestBody(
                     "multipart/form-data".toMediaTypeOrNull()
                 ),
                 currentDate.toRequestBody(
@@ -295,6 +357,12 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
     }
 
+    private fun getUserDetail() {
+        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner) {
+            empId = it.toString()
+            Toast.makeText(requireContext(), "EmpId : $empId", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun getLocation() {
         msettingsClient = LocationServices.getSettingsClient(requireContext())
@@ -312,8 +380,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                     latitude = location.latitude
                     longtitude = location.longitude
 
-                    Toast.makeText(requireContext(), "${location.latitude}", Toast.LENGTH_SHORT)
-                        .show()
+                    /*    Toast.makeText(requireContext(), "${location.latitude}", Toast.LENGTH_SHORT)
+                            .show()*/
                 }
             }
 
@@ -350,6 +418,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
             Looper.getMainLooper()
         )
     }
+
+
 }
 
 

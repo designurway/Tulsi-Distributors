@@ -119,6 +119,7 @@
             android:layout_marginBottom="5dp"/>
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/confirmOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"

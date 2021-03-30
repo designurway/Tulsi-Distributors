@@ -125,7 +125,14 @@
         android:id="@+id/updateProfileFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.UpdateProfileFragment"
         android:label="fragment_update_profile"
-        tools:layout="@layout/fragment_update_profile" />
+        tools:layout="@layout/fragment_update_profile" >
+        <argument
+            android:name="imageUrl"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/changeNewPassFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.update_password.ChangeNewPassFragment"

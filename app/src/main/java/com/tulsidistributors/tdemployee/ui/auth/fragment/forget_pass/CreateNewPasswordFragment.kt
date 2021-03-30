@@ -23,17 +23,17 @@ import kotlinx.coroutines.withContext
 class CreateNewPasswordFragment : Fragment() {
 
     lateinit var binding: FragmentCreateNewPasswordBinding
-    private val args:CreateNewPasswordFragmentArgs by navArgs()
+    private val args: CreateNewPasswordFragmentArgs by navArgs()
     lateinit var passwordEt: EditText
     lateinit var confirmpwdEt: EditText
-    lateinit var changePwdBtn:Button
+    lateinit var changePwdBtn: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-       binding= FragmentCreateNewPasswordBinding.inflate(inflater,container,false)
+        binding = FragmentCreateNewPasswordBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,39 +41,40 @@ class CreateNewPasswordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val phone=args.phoneNumber
-        passwordEt=binding.newPasswordEt
-        confirmpwdEt=binding.confirmPasswordEt
-        changePwdBtn=binding.confirmNewPassword
+        val phone = args.phoneNumber
+        passwordEt = binding.newPasswordEt
+        confirmpwdEt = binding.confirmPasswordEt
+        changePwdBtn = binding.confirmNewPassword
 
 
         changePwdBtn.setOnClickListener {
-            val password=passwordEt.text.toString().trim()
-            val confirmPwd=confirmpwdEt.text.toString().trim()
+            val password = passwordEt.text.toString().trim()
+            val confirmPwd = confirmpwdEt.text.toString().trim()
 
-            if(password.isEmpty()){
-                passwordEt.error="Required fields"
+            if (password.isEmpty()) {
+                passwordEt.error = "Required fields"
                 passwordEt.requestFocus()
                 return@setOnClickListener
 
-            }else if(confirmPwd.isEmpty()){
-                confirmpwdEt.error="Required field"
+            } else if (confirmPwd.isEmpty()) {
+                confirmpwdEt.error = "Required field"
                 confirmpwdEt.requestFocus()
                 return@setOnClickListener
-            }
-            else if(!password.equals(confirmPwd)){
+            } else if (!password.equals(confirmPwd)) {
                 Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
             CoroutineScope(Dispatchers.Main).launch {
                 val response = updateNewPassword(phone, password)
 
-                if(response.status.equals("1")){
+                if (response.status.equals("1")) {
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
-                    val action=CreateNewPasswordFragmentDirections.actionCreateNewPasswordFragmentToLoginFragment()
+                    val action =
+                        CreateNewPasswordFragmentDirections.actionCreateNewPasswordFragmentToLoginFragment()
                     view.findNavController().navigate(action)
 
-                }else{
+                } else {
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
 
                 }
@@ -82,8 +83,8 @@ class CreateNewPasswordFragment : Fragment() {
 
     }
 
-    suspend private fun updateNewPassword(phone:String,password:String):StatusMessageModel{
-        return withContext(Dispatchers.IO){
+    suspend private fun updateNewPassword(phone: String, password: String): StatusMessageModel {
+        return withContext(Dispatchers.IO) {
             BaseClient.getInstance.updateNewPassword(phone, password).body()!!
         }
     }

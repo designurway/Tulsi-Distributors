@@ -11,18 +11,28 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentProfileBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
 import com.tulsidistributors.tdemployee.datastore.dataStore
+import com.tulsidistributors.tdemployee.json.BaseClient
+import com.tulsidistributors.tdemployee.model.user_detail.UserDetailModel
 import com.tulsidistributors.tdemployee.ui.auth.AuthActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 
 class ProfileFragment : Fragment() {
 
     lateinit var binding: FragmentProfileBinding
     lateinit var action: NavDirections
+    lateinit var name:String
+    lateinit var imageUrl:String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,8 +45,10 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getUserDetail()
+
         binding.editProfileBtn.setOnClickListener {
-            action = ProfileFragmentDirections.actionProfileFragmentToUpdateProfileFragment()
+            action = ProfileFragmentDirections.actionProfileFragmentToUpdateProfileFragment(name = name,imageUrl = imageUrl)
             requireView().findNavController().navigate(action)
         }
 
@@ -80,6 +92,50 @@ class ProfileFragment : Fragment() {
                 requireActivity().finish()
 
             }
+        }
+    }
+
+    private fun getUserDetail() {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            try {
+                val response = getUserDetailApiCall()
+
+                if (response.isSuccessful) {
+
+                    val responseData = response.body()
+                    if (responseData!!.status.equals("1")){
+
+                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
+
+                        name = responseData.first_name
+
+                        binding.name.text = name
+                        binding.mobile.text = responseData.phone_number
+                         imageUrl = "http://192.168.4.166:8000/${responseData.profile}"
+//                        Glide.with(requireView()).load(imageUrl).into(binding.profileImg)
+                    }else{
+                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Response Message ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Exception Occured ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+    }
+
+    private suspend fun getUserDetailApiCall(): Response<UserDetailModel> {
+        return withContext(Dispatchers.IO) {
+            BaseClient.getInstance.getUserDetails("TD001")
         }
     }
 }

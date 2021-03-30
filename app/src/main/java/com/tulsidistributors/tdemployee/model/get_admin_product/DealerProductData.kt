@@ -3,6 +3,7 @@ package com.tulsidistributors.tdemployee.model.get_admin_product
 import retrofit2.http.GET
 
 data class DealerProductData(
+    val product_id:String,
     val product_name:String,
     val basic_amount:String,
     val total_amount:String,
