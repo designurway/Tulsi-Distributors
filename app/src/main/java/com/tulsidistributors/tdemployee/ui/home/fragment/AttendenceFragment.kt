@@ -50,6 +50,7 @@ class AttendenceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
 
         binding = FragmentAttendenceBinding.inflate(inflater, container, false)
