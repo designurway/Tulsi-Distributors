@@ -2,18 +2,18 @@ package com.tulsidistributors.tdemployee.ui.home.fragment
 
 import RecyclerViewSwipeCallback
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -37,6 +37,9 @@ import com.tulsidistributors.tdemployee.ui.adapter.AddProductAdapter
 import com.tulsidistributors.tdemployee.ui.adapter.AddProductItemClickListner
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
 import com.tulsidistributors.tdemployee.utils.Common
+import com.tulsidistributors.tdemployee.utils.dataFound
+import com.tulsidistributors.tdemployee.utils.noDataFound
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,6 +56,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     var placeOderList: ArrayList<PlaceOrderData> = ArrayList()
 
     var dealer_id: String = ""
+    var routingId: String = ""
     var shop_address: String = ""
     var shopName: String = ""
     var totalPrice: Int = 0
@@ -67,8 +71,11 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     var qnt: String? = null
     lateinit var userLoginPrefrence: UserLoginPreferences
     lateinit var saleExectiveId: String
-    lateinit var refrenceId:String
-    lateinit var empId:String
+    lateinit var refrenceId: String
+    lateinit var empId: String
+    lateinit var sadIc: ImageView
+    lateinit var mainLayout: ConstraintLayout
+    lateinit var mContext: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,17 +95,22 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mContext = requireContext()
+
         dealer_id = args.dealerId
         shop_address = args.address
         shopName = args.shopName
+        routingId = args.routingId
 
         productRecycler = binding.listRv
         show_btn = binding.showBtn
+        sadIc = binding.sadIc
+        mainLayout = binding.mainLayout
 
         binding.shopAddressTv.text = shop_address
         binding.shopNameTv.text = shopName
 
-        refrenceId = "Refno${Common(requireContext()).generateRandomNumber()}"
+        refrenceId = "Refno${Common().generateRandomNumber()}"
 
 
         userLoginPrefrence = UserLoginPreferences(requireActivity().dataStore)
@@ -108,12 +120,12 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         val layoutManager = LinearLayoutManager(requireContext())
         productRecycler.layoutManager = layoutManager
 
-        binding.addProdSearch.searchItemEt.doOnTextChanged { text, start, before, count ->
+        binding.addProdSearch.searchItemEt.doAfterTextChanged {text->
 
-            if (text!!.length >= 2) {
+            if (text!!.length >= 3) {
                 searchDealerProductItem(dealer_id, searchQuery = text.toString())
             } else {
-                getDealerProductItem(dealer_id)
+                getDealerProductItem(dealer_id, empId)
             }
         }
 
@@ -121,7 +133,6 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
             openAddedItemBottomSheet()
         }
 
-        getDealerProductItem(dealer_id)
 
     }
 
@@ -198,16 +209,8 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallBack)
         itemTouchHelper.attachToRecyclerView(bottomSheetRecycler)
 
-        getDealerProductItem(dealer_id)
-
-
-
         confirmOrder.setOnClickListener {
-
-
-
-            Toast.makeText(requireContext(), "Refrence Id $refrenceId", Toast.LENGTH_SHORT).show()
-
+            showToast(mContext, "Refrence Id $refrenceId")
             placeOrder()
         }
 
@@ -221,7 +224,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
             dealer_id,
             totalPrice.toString(),
             "500",
-        "100",
+            "100",
             placeOderList
         )
 
@@ -232,42 +235,40 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                 val response = placeOrderApiCall(placeOrderModel)
 
                 if (response.isSuccessful) {
+                    dataFound(mainLayout, sadIc)
+
                     val responseData = response.body()
-                    Toast.makeText(requireContext(), "${responseData!!.message}", Toast.LENGTH_SHORT)
-                        .show()
+                    showToast(mContext, "${responseData!!.message}")
+
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Response Message ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast(mContext, "Response Message ${response.message()}")
+                    noDataFound(sadIc, mainLayout)
+
                 }
 
             } catch (e: java.lang.Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Execption Occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                noDataFound(sadIc, mainLayout)
+                showToast(mContext, "Execption Occured ${e.message}")
+
             }
         }
     }
 
 
-    private suspend fun placeOrderApiCall(placeOrderModel:PlaceOrderModel): Response<StatusMessageModel> {
+    private suspend fun placeOrderApiCall(placeOrderModel: PlaceOrderModel): Response<StatusMessageModel> {
 
         return withContext(Dispatchers.IO) {
 
 
             BaseClient.getInstance.placeOrder(
-               placeOrderModel
+                placeOrderModel
             )
         }
     }
 
-    private fun getDealerProductItem(dealerId: String) {
+    private fun getDealerProductItem(dealerId: String, empId: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val response = getDealerProductItemApiCall(dealerId = dealerId)
+            val response = getDealerProductItemApiCall(dealerId = dealerId, empId = empId)
 
             try {
                 if (response.isSuccessful) {
@@ -280,33 +281,35 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
                         val adapter = AddProductAdapter(productItem, this@AddProductListFragment)
                         productRecycler.adapter = adapter
+
+                        dataFound(mainLayout, sadIc)
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "${responseData?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+
+                        noDataFound(sadIc, mainLayout)
+
+                        showToast(mContext, "${responseData?.message}")
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Response Code ${response.code()} Response Message ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    noDataFound(sadIc, mainLayout)
+                    showToast(
+                        mContext,
+                        "Response Code ${response.code()} Response Message ${response.message()}"
+                    )
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception Occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                noDataFound(sadIc, mainLayout)
+                showToast(mContext, "Exception Occured ${e.message}")
+
             }
         }
     }
 
-    private suspend fun getDealerProductItemApiCall(dealerId: String): Response<DealerProductModel> {
+    private suspend fun getDealerProductItemApiCall(
+        dealerId: String,
+        empId: String
+    ): Response<DealerProductModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getDealerProductItem(dealer_id, empId)
+            BaseClient.getInstance.getDealerProductItem(dealerId, empId)
         }
     }
 
@@ -324,26 +327,26 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                             responseData!!.product_details
                         val adapter = AddProductAdapter(productItem, this@AddProductListFragment)
                         productRecycler.adapter = adapter
+
+                        dataFound(mainLayout, sadIc)
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "${responseData?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        noDataFound(sadIc, mainLayout)
+                        showToast(mContext, "${responseData?.message}")
+
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Response Code ${response.code()} Response Message ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    noDataFound(sadIc, mainLayout)
+                    showToast(
+                        mContext,
+                        "Response Code ${response.code()} Response Message ${response.message()}"
+                    )
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception Occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+
+                noDataFound(sadIc, mainLayout)
+
+                showToast(mContext, "Exception Occured ${e.message}")
+
             }
         }
     }
@@ -426,6 +429,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                     productId,
                     refrenceId,
                     dealer_id,
+                    routingId,
                     "59",
                     totalQuantity.toString()
                 )
@@ -456,13 +460,15 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                         productId,
                         refrenceId,
                         dealer_id,
+                        routingId,
                         "59",
                         totalQuantity.toString()
                     )
                 )
 
             } else {
-                Toast.makeText(requireContext(), "Already added", Toast.LENGTH_LONG).show()
+                showToast(mContext, "Already added")
+
             }
 
         }
@@ -562,8 +568,10 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
         }
 
-        userLoginPrefrence.empIdFlow.asLiveData().observe(viewLifecycleOwner){
+        userLoginPrefrence.empIdFlow.asLiveData().observe(viewLifecycleOwner) {
             empId = it.toString()
+
+            getDealerProductItem(dealer_id, it.toString())
         }
     }
 

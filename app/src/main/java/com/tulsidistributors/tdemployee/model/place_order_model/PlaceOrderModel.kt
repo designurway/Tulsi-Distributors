@@ -6,5 +6,5 @@ data class PlaceOrderModel(
     val total_amount:String,
     val pending_amount:String,
     val advance_amount:String,
-    val order_item:ArrayList<PlaceOrderData>
+    val order_items:ArrayList<PlaceOrderData>
 )

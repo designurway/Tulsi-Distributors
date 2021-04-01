@@ -120,6 +120,9 @@
         <argument
             android:name="shopName"
             app:argType="string" />
+        <argument
+            android:name="routing_id"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/updateProfileFragment"

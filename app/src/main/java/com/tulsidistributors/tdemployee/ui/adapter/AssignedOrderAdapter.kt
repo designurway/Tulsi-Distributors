@@ -36,11 +36,18 @@ class AssignedOrderAdapter(
         holder.pendingOrderClicked.setOnClickListener {
             val dealer_id = orderList.get(position).dealer_id
             val shop_address = orderList.get(position).address
+            val latitude = orderList.get(position).latitude
+            val longitude = orderList.get(position).longitude
+            val routingId = orderList.get(position).routing_id
+
             listner.onItemClicked(
                 position,
                 shopName = orderList.get(position).shop_name,
                 dealer_id = dealer_id,
-                shop_address = shop_address
+                shop_address = shop_address,
+                latitude = latitude,
+                longitude = longitude,
+                routingId = routingId
             )
         }
 
@@ -54,6 +61,6 @@ class AssignedOrderAdapter(
 }
 
 interface AssignedOrderClicked {
-    fun onItemClicked(postion: Int, shopName: String, dealer_id: String, shop_address: String)
+    fun onItemClicked(postion: Int, shopName: String, dealer_id: String, shop_address: String,latitude:String,longitude:String,routingId:String)
 }
 

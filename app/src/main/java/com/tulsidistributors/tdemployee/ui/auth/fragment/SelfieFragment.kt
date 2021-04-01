@@ -31,10 +31,7 @@ import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
-import com.tulsidistributors.tdemployee.utils.SimpleArcLoader
-import com.tulsidistributors.tdemployee.utils.UploadImageRequestBody
-import com.tulsidistributors.tdemployee.utils.getFileName
-import com.tulsidistributors.tdemployee.utils.showToast
+import com.tulsidistributors.tdemployee.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -68,6 +65,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     lateinit var userLoginPreferences: UserLoginPreferences
     lateinit var empId: String
     lateinit var token:String
+    lateinit var currentDate:String
 
     companion object {
         private const val CAMERA_PREMISSION_CODE = 1
@@ -90,6 +88,10 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
         getUserDetail()
+
+         currentDate = Common().getCurrentDate("yyyy-MM-dd")
+
+        showToast(requireContext(),"Current Date : $currentDate")
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
@@ -130,7 +132,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                 generateToken()
                 uploadSelfie()
             } else {
-                Toast.makeText(requireContext(), "Select Image", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "Select Image", Toast.LENGTH_SHORT).show()
+                showToast(requireContext(),"Current Date : $currentDate")
 //                Toast.makeText(requireContext(), "Next Button Clicked $latitude $longtitude", Toast.LENGTH_SHORT).show()
 
             }
@@ -246,11 +249,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         body: UploadImageRequestBody
     ): Response<StatusMessageModel> {
 
-        Toast.makeText(requireContext(), "Upload Selife $latitude $longtitude", Toast.LENGTH_SHORT)
-            .show()
-
-        val sdf = SimpleDateFormat("dd-M-yyyy", Locale.UK)
-        val currentDate = sdf.format(Date())
+     /*   Toast.makeText(requireContext(), "Upload Selife $latitude $longtitude", Toast.LENGTH_SHORT)
+            .show()*/
 
         return withContext(Dispatchers.IO) {
             BaseClient.getInstance.uploadSelfie(

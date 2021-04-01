@@ -1,10 +1,12 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
@@ -22,7 +24,7 @@ class HomeFragment : Fragment(), HomeItemClicked {
     lateinit var binding: FragmentHomeBinding
     lateinit var categoryRv: RecyclerView
     var categoryAdapter: HomeAdapter? = null
-    lateinit var action:NavDirections
+    lateinit var action: NavDirections
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,34 +45,31 @@ class HomeFragment : Fragment(), HomeItemClicked {
         list.add(
             CategoryModel(
                 "Assigned",
-                requireActivity().getDrawable(R.drawable.assigned_task)!!
+                ContextCompat.getDrawable(requireContext(), R.drawable.assigned_task)!!
             )
         )
 
         list.add(
             CategoryModel(
                 "Completed",
-                requireActivity().getDrawable(R.drawable.completed_task)!!
+                ContextCompat.getDrawable(requireContext(), R.drawable.completed_task)!!
+
             )
         )
 
         list.add(
             CategoryModel(
                 "Stocks",
-                requireActivity().getDrawable(R.drawable.packages)!!
+                ContextCompat.getDrawable(requireContext(), R.drawable.packages)!!
             )
         )
 
         list.add(
             CategoryModel(
                 "Attendance",
-                requireActivity().getDrawable(R.drawable.attendance)!!
+                ContextCompat.getDrawable(requireContext(), R.drawable.attendance)!!
             )
         )
-
-        /* list.add(CategoryModel("Settings",
-             requireActivity().getDrawable(R.drawable.setting)!!
-         ))*/
 
 
         categoryAdapter = HomeAdapter(list, this)
@@ -81,7 +80,6 @@ class HomeFragment : Fragment(), HomeItemClicked {
     }
 
     override fun homeItemClickedListner(name: String) {
-//        Toast.makeText(requireContext(), "Item Clicked : ${name}", Toast.LENGTH_SHORT).show()
 
         when (name) {
             "Assigned" -> {

@@ -1,4 +1,4 @@
-package com.tulsidistributors.tdemployee.json
+  package com.tulsidistributors.tdemployee.json
 
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.model.admin_brand.AdminBrandModel
@@ -54,7 +54,7 @@ interface TDApi {
     ): Response<StatusMessageModel>
 
 
-    @GET("getAssignedOrder")
+    @GET("getAssignedOrders")
     suspend fun getAssignedOrder(
         @Query("empId") empId: String
     ): Response<AssignedOrderModel>
@@ -127,7 +127,7 @@ interface TDApi {
     @POST("uploadSelfie")
     suspend fun uploadSelfie(
         @Part image: MultipartBody.Part,
-        @Part("saleExecutiveId") saleExecutiveId: RequestBody,
+        @Part("emp_id") saleExecutiveId: RequestBody,
         @Part("loginDate") loginDate: RequestBody,
         @Part("latitude") latitude: RequestBody,
         @Part("longitude") longitude: RequestBody

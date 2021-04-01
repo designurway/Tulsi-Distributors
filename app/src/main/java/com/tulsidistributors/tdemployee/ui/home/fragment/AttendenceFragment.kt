@@ -1,26 +1,22 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.datastore.dataStore
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.asLiveData
 import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.databinding.FragmentAttendenceBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
 import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.attendance.AttendanceModel
-import com.tulsidistributors.tdemployee.model.user_detail.UserDetailModel
 import com.tulsidistributors.tdemployee.utils.Common
-import com.tulsidistributors.tdemployee.utils.GetUserDetails
 import com.tulsidistributors.tdemployee.utils.TimeDiffrence
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
@@ -39,11 +35,11 @@ class AttendenceFragment : Fragment() {
     lateinit var date_cv: CardView
     lateinit var date__tv: TextView
     lateinit var selectedDate: String
-    lateinit var name:String
-    lateinit var imageUrl:String
+    lateinit var name: String
+    lateinit var imageUrl: String
     lateinit var userLoginPreferences: UserLoginPreferences
-    lateinit var empId:String
-    lateinit var getLoginDetails:GetUserDetails
+    lateinit var empId: String
+    lateinit var mContext: Context
 
 
     override fun onCreateView(
@@ -63,15 +59,17 @@ class AttendenceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        getLoginDetails()
+        mContext = requireContext()
 
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
+        getLoginDetails()
 
         date_cv = binding.dateCv
         date__tv = binding.dateTv
 
+        date__tv.text = Common().getCurrentDate("dd/MM/yyyy")
 
-        getLoginDetails = GetUserDetails(UserLoginPreferences(requireActivity().dataStore),viewLifecycleOwner)
 
         date_cv.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -81,23 +79,28 @@ class AttendenceFragment : Fragment() {
 
 
 
+
             datePickerDialog = DatePickerDialog(
                 requireContext(),
                 DatePickerDialog.OnDateSetListener { view, Year, Month, dayOfMonth ->
 
                     //Date format
-                    if (Month<10){
-                        selectedDate = "$dayOfMonth-0${(Month + 1)}-$Year"
-                    }else{
-                        selectedDate = "$dayOfMonth-${(Month + 1)}-$Year"
+                    if (Month < 10 && dayOfMonth < 10) {
+                        selectedDate = "$Year-0${(Month + 1)}-0$dayOfMonth"
+                    } else if (Month > 10 && dayOfMonth < 10) {
+                        selectedDate = "$Year-${(Month + 1)}-0$dayOfMonth"
+                    } else if (Month < 10 && dayOfMonth > 10) {
+                        selectedDate = "$Year-0${(Month + 1)}-$dayOfMonth"
+                    } else {
+                        selectedDate = "$Year-${(Month + 1)}-$dayOfMonth"
                     }
 
 
-                    date__tv.setText(dayOfMonth.toString() + "/" + (Month + 1) + "/" + Year)
+                    date__tv.text = dayOfMonth.toString() + "/" + (Month + 1) + "/" + Year
 
-                    getAttandance(getLoginDetails.getEmpId(), selectedDate)
+                    getAttandance(empId, selectedDate)
 
-                    Toast.makeText(requireContext(), "selected date $selectedDate", Toast.LENGTH_SHORT).show()
+                    showToast(mContext, "selected date $selectedDate")
 
                 }, year, month, day
             )
@@ -108,15 +111,12 @@ class AttendenceFragment : Fragment() {
 
         binding.totalTime.setOnClickListener {
 
-            showToast(requireContext(), Common(requireContext()).getCurrentDate())
-
 
         }
 
-        getAttandance(getLoginDetails.getEmpId(),  Common(requireContext()).getCurrentDate())
-
 
     }
+
 
     private fun getAttandance(emp_id: String, att_date: String) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -130,8 +130,10 @@ class AttendenceFragment : Fragment() {
 
                     if (resposeData?.status.equals("1")) {
 
-                        val loginTime = resposeData?.data?.login_time
-                        val logoutTime = resposeData?.data?.logout_time
+                        val loginTime =
+                            Common().getTime(resposeData?.data?.login_time.toString())
+                        val logoutTime =
+                            Common().getTime(resposeData?.data?.logout_time.toString())
 
                         binding.attendName.text = resposeData?.data?.first_name
                         binding.attendEmail.text = resposeData?.data?.emp_id
@@ -142,45 +144,37 @@ class AttendenceFragment : Fragment() {
                             .into(binding.atteImg)
 
 
-                        val timeDiff = TimeDiffrence(loginTime.toString(), logoutTime.toString())
+                        val timeDiff = TimeDiffrence(loginTime, logoutTime)
 
                         val totalTime = timeDiff.getTimeDiffrence()
 
 
                         binding.totalTime.text = totalTime
 
-                        Toast.makeText(
-                            requireContext(),
-                            "Total Time Diffrence ${totalTime}",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+                        showToast(mContext, "Total Time Diffrence ${totalTime}")
+
+
                     } else {
 
                         binding.loginTime.text = "00:00:00"
                         binding.logoutTime.text = "00:00:00"
                         binding.totalTime.text = "00:00"
 
-                        Toast.makeText(
-                            requireContext(),
-                            "Message : ${resposeData?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showToast(mContext, "Message : ${resposeData?.message}")
+
                     }
 
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "ResponseCode : ${response.code()} and ResponseMessage ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+
+                    showToast(
+                        mContext,
+                        "ResponseCode : ${response.code()} and ResponseMessage ${response.message()}"
+                    )
+
+
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception Occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast(mContext, "Exception Occured ${e.message}")
             }
         }
     }
@@ -190,61 +184,24 @@ class AttendenceFragment : Fragment() {
         date: String
     ): Response<AttendanceModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getAttendance(empId,date)
+            BaseClient.getInstance.getAttendance(empId, date)
         }
     }
 
 
-    private fun getUserDetail() {
+    private fun getLoginDetails() {
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner, { EmpId ->
+            empId = EmpId.toString()
 
-            try {
-                val response = getUserDetailApiCall()
+            getAttandance(EmpId.toString(), Common().getCurrentDate("yyyy-MM-dd"))
 
-                if (response.isSuccessful) {
+            showToast(mContext, "Today Date : ${Common().getCurrentDate("yyyy-MM-dd")}")
 
-                    val responseData = response.body()
-                    if (responseData!!.status.equals("1")){
+        })
 
-                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
-
-                        name = responseData.first_name
-
-                        binding.attendName.text = name
-                        binding.attendEmail.text = responseData.email_id
-                        imageUrl = "${responseData.profile}"
-//                        Glide.with(requireView()).load(imageUrl).into(binding.profileImg)
-                    }else{
-                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Response Message ${response.message()}", Toast.LENGTH_SHORT).show()
-                }
-
-            } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception Occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
 
     }
 
-    private suspend fun getUserDetailApiCall(): Response<UserDetailModel> {
-        return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getUserDetails("TD001")
-        }
-    }
-
-
-  /*  private fun getLoginDetails(){
-        Toast.makeText(requireContext(), "Method Called", Toast.LENGTH_SHORT).show()
-        val userDetails = GetUserDetails(UserLoginPreferences(requireActivity().dataStore),viewLifecycleOwner)
-
-        empId=userDetails.getEmpId()
-    }*/
 
 }

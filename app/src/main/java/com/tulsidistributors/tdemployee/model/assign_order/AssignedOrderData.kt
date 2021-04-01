@@ -5,6 +5,9 @@ data class AssignedOrderData(
     val name:String,
     val shop_name:String,
     val address:String,
+    val latitude:String,
+    val longitude:String,
     val order_status:String,
+    val routing_id:String,
     val date:String
     )

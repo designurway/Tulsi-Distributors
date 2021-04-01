@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.tulsidistributors.tdemployee">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -30,11 +29,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ui.SampleActivity">
+
+        </activity>
+
         <receiver
             android:name=".work_manager.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -69,7 +71,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.auth.AuthActivity" />
-        <activity android:name=".ui.home.HomePageActivity" />
+        <activity android:name=".ui.home.HomePageActivity">
+
+        </activity>
         <activity android:name=".MainActivity" />
 
         <provider
@@ -81,7 +85,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>

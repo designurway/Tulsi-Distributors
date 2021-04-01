@@ -1,10 +1,13 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
+import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +28,8 @@ import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderData
 import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderModel
 import com.tulsidistributors.tdemployee.ui.adapter.AssignedOrderAdapter
 import com.tulsidistributors.tdemployee.ui.adapter.AssignedOrderClicked
+import com.tulsidistributors.tdemployee.utils.GetUserDetails
+import com.tulsidistributors.tdemployee.utils.showLog
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,14 +48,15 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
     lateinit var msettingsClient: SettingsClient
     private lateinit var locationCallback: LocationCallback
     lateinit var locationRequest: LocationRequest
-    var shopLat: Double = 12.263783007551348
-    var shopLong: Double = 76.64457088158639
+    var shopLat: Double = 0.0
+    var shopLong: Double = 0.0
     var curLong: Double = 0.0
     var curLat: Double = 0.0
-     lateinit var EmpId:String
     lateinit var userLoginPreferences: UserLoginPreferences
-
+    var EmpId = ""
+    var EmaiId=""
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    lateinit var mContext: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +70,7 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mContext = requireContext()
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
@@ -78,6 +85,7 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
         locationRequest.fastestInterval = 500
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
+
         getCurrentLocation()
 
 
@@ -86,12 +94,13 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
         val layoutManager = LinearLayoutManager(requireContext())
         assignedOrderRecyclerView.layoutManager = layoutManager
 
+
+
     }
 
 
 
     private fun getAssignedOrder(empId:String){
-//        showToast(requireContext(),"$EmpId")
         CoroutineScope(Dispatchers.Main).launch {
 
             try {
@@ -103,22 +112,21 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
                     assignedOrderRecyclerView.adapter = assignAdapter
 
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Response Code : ${response.code()} and Respone Message : ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+
+                    showToast(mContext,"Response Code : ${response.code()} and Respone Message : ${response.message()}")
+
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(), "Exception Occured : ${e.message}", Toast.LENGTH_SHORT
-                ).show()
+
+                showToast(mContext,"Exception Occured : ${e.message}")
+
             }
         }
     }
 
     suspend private fun getAssignedOderApiCall(empId: String): Response<AssignedOrderModel> {
         return withContext(Dispatchers.IO) {
+            showLog("empId","EmpId: $empId")
             BaseClient.getInstance.getAssignedOrder(empId)
         }
     }
@@ -127,26 +135,33 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
         postion: Int,
         shopName: String,
         dealer_id: String,
-        shop_address: String
+        shop_address: String,
+        latitude: String,
+        longitude: String,
+        routingId: String
     ) {
 
+        shopLat = latitude.toDouble()
+        shopLong = longitude.toDouble()
 
         if (curLat!=0.0){
             val distance = calculateDistance()
 
-            Toast.makeText(requireContext(), "Distance $distance", Toast.LENGTH_SHORT).show()
+            showToast(mContext,"Distance $distance")
+
 
             if (distance < 100) {
                 val action =
                     AssignedOrderFragmentDirections.actionAssignedOrderFragmentToAddProductListFragment2(
                         dealerId = dealer_id,
                         address = shop_address,
-                        shopName = shopName
+                        shopName = shopName,
+                        routingId = routingId
                     )
                 requireView().findNavController().navigate(action)
             }
         }else{
-            Toast.makeText(requireContext(), "Current Location Empty", Toast.LENGTH_SHORT).show()
+            showToast(mContext,"Current Location Empty")
         }
 
 
@@ -158,7 +173,7 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
         currentLocation.longitude = curLong
 
         val shopLocation = Location("")
-        shopLocation.latitude = shopLat
+        shopLocation.latitude = shopLat+
         shopLocation.longitude = shopLong
 
         val distanceInMeter: Float = currentLocation.distanceTo(shopLocation)
@@ -176,13 +191,8 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
 
     }
 
-
-
     private fun getCurrentLocation() {
         msettingsClient = LocationServices.getSettingsClient(requireContext())
-
-        Toast.makeText(requireContext(), "Inside method ", Toast.LENGTH_SHORT).show()
-
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
@@ -194,8 +204,6 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
                     curLat = location.latitude
                     curLong = location.longitude
 
-                   /* Toast.makeText(requireContext(), "${location.latitude}", Toast.LENGTH_SHORT)
-                        .show()*/
                 }
             }
 
@@ -235,11 +243,16 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
     }
 
     private fun getUserDetails(){
-        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner,{
-            EmpId = it.toString()
 
-            getAssignedOrder(EmpId)
+//        val emp = GetUserDetails(userLoginPreferences,viewLifecycleOwner).getEmpId()
+
+        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner,{
+            EmaiId = it.toString()
+            getAssignedOrder(it.toString())
+            showToast(mContext,EmpId)
         })
+
+
     }
 
 
