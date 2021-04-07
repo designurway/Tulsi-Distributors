@@ -2,18 +2,21 @@ package com.tulsidistributors.tdemployee.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.databinding.SearchStockItemBinding
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemData
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
 import java.util.zip.Inflater
 
-class SearchStockItemAdapter(val stockItem:ArrayList<SearchStockItemData>):RecyclerView.Adapter<SearchStockItemAdapter.SearchStock_VH>() {
+class SearchStockItemAdapter(val stockItem:ArrayList<SearchStockItemData>,val listner: OnAddItemClickListner):RecyclerView.Adapter<SearchStockItemAdapter.SearchStock_VH>() {
 
     class SearchStock_VH(binding:SearchStockItemBinding):RecyclerView.ViewHolder(binding.root){
         val staockProductName = binding.staockProductName
         val stockProductDes = binding.stockProductDes
         val stockProductPrice = binding.stockProductPrice
+        val addItem = binding.addItem
+        val alreadyAddedBtn = binding.alreadyAdded
         val stockAvail = binding.stockAvail
     }
 
@@ -24,12 +27,22 @@ class SearchStockItemAdapter(val stockItem:ArrayList<SearchStockItemData>):Recyc
 
     override fun onBindViewHolder(holder: SearchStock_VH, position: Int) {
         holder.staockProductName.text = stockItem.get(position).product_name
-        holder.stockProductDes.text = stockItem.get(position).product_desc
+        holder.stockProductDes.text = stockItem.get(position).description
         holder.stockProductPrice.text = "Rs ${stockItem.get(position).total_amount}"
         holder.stockAvail.text = stockItem.get(position).status
+
+        val productId = stockItem.get(position).id
+
+        holder.addItem.setOnClickListener {
+            listner.onAddBtnClicked(position,productId = productId,addItemBtn = holder.addItem,holder.alreadyAddedBtn)
+        }
     }
 
     override fun getItemCount(): Int {
         return stockItem.size
     }
+}
+
+interface OnAddItemClickListner{
+    fun onAddBtnClicked(positon:Int,productId:String,addItemBtn:Button,alreadyAddedBtn:Button)
 }

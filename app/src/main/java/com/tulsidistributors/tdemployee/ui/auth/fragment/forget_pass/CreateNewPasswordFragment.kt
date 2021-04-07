@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentCreateNewPasswordBinding
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +29,7 @@ class CreateNewPasswordFragment : Fragment() {
     lateinit var passwordEt: EditText
     lateinit var confirmpwdEt: EditText
     lateinit var changePwdBtn: Button
+    lateinit var mContext:Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +43,8 @@ class CreateNewPasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mContext = requireContext()
 
         val phone = args.phoneNumber
         passwordEt = binding.newPasswordEt
@@ -61,7 +66,7 @@ class CreateNewPasswordFragment : Fragment() {
                 confirmpwdEt.requestFocus()
                 return@setOnClickListener
             } else if (!password.equals(confirmPwd)) {
-                Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                showToast(mContext,"Passwords do not match")
                 return@setOnClickListener
             }
 
@@ -69,13 +74,14 @@ class CreateNewPasswordFragment : Fragment() {
                 val response = updateNewPassword(phone, password)
 
                 if (response.status.equals("1")) {
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    showToast(mContext,response.message)
                     val action =
                         CreateNewPasswordFragmentDirections.actionCreateNewPasswordFragmentToLoginFragment()
                     view.findNavController().navigate(action)
 
                 } else {
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+
+                    showToast(mContext,response.message)
 
                 }
             }

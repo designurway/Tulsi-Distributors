@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment.setting.update_password
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.VerifyForgotPassFragmentArgs
 import com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.VerifyForgotPassFragmentDirections
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +32,7 @@ class VerifyChangePassFragment : Fragment() {
     lateinit var otpEt2: EditText
     lateinit var otpEt3: EditText
     lateinit var otpEt4: EditText
+    lateinit var mContext: Context
 
     private val args: VerifyChangePassFragmentArgs by navArgs()
 
@@ -45,6 +48,8 @@ class VerifyChangePassFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mContext = requireContext()
 
         val phone = args.phone
 
@@ -91,14 +96,12 @@ class VerifyChangePassFragment : Fragment() {
                 val response = verifyPhoneOtp(phone, otp)
 
                 if (response.status.equals("1")) {
-
-                    Toast.makeText(context, "On Sucess ${response.message}", Toast.LENGTH_SHORT).show()
+                    showToast(mContext, "On Sucess ${response.message}")
                     val actions =
                         VerifyChangePassFragmentDirections.actionVerifyChangePassFragmentToChangeNewPassFragment(phone)
                     view.findNavController().navigate(actions)
                 } else {
-
-                    Toast.makeText(context, "not  Sucess ${response.message}", Toast.LENGTH_SHORT).show()
+                    showToast(mContext, "not  Sucess ${response.message}")
 
 
                 }

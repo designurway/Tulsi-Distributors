@@ -55,9 +55,7 @@ data class SelectedProductAdapter(
 
         total = selectedProductModel.get(position).proPrice.toInt() + total
 
-//        holder.itemView.setOnClickListener({
-//
-//        })
+
     }
 
 }

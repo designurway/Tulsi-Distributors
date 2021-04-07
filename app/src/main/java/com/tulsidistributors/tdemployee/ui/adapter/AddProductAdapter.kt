@@ -72,7 +72,7 @@ class AddProductAdapter(
 
         holder.constriantQuantity.setOnClickListener {
 
-            listner.openDialogBox(holder.oldQnty, position)
+            listner.openDialogBox(holder.oldQnty, position,product_id = productId)
         }
 
         holder.addProductBtn.setOnClickListener {
@@ -97,7 +97,7 @@ class AddProductAdapter(
 interface AddProductItemClickListner {
     fun plusButtonClicked(position: Int, productQty: Int, productQtyTxt: TextView)
     fun minusButtonClicked(position: Int, productQty: Int, productQtyTxt: TextView)
-    fun openDialogBox(oldQnty: TextView, position: Int)
+    fun openDialogBox(oldQnty: TextView, position: Int, product_id:String)
     fun onAddButtonClicked(
         addBtn: Button,
         position: Int,

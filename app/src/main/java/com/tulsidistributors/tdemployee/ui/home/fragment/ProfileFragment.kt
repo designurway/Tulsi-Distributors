@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.user_detail.UserDetailModel
 import com.tulsidistributors.tdemployee.ui.auth.AuthActivity
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,8 +32,11 @@ class ProfileFragment : Fragment() {
 
     lateinit var binding: FragmentProfileBinding
     lateinit var action: NavDirections
-    lateinit var name:String
+     var name:String =""
     lateinit var imageUrl:String
+    lateinit var mContext:Context
+    lateinit var userLoginPreferences: UserLoginPreferences
+    lateinit var empId:String
 
 
     override fun onCreateView(
@@ -45,7 +50,13 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getUserDetail()
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
+
+        getLoginDetails()
+
+        mContext = requireContext()
+
+
 
         binding.editProfileBtn.setOnClickListener {
             action = ProfileFragmentDirections.actionProfileFragmentToUpdateProfileFragment(name = name,imageUrl = imageUrl)
@@ -86,7 +97,7 @@ class ProfileFragment : Fragment() {
             val userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
             viewLifecycleOwner.lifecycleScope.launch {
-                val abc = userLoginPreferences.logout()
+                val abc = userLoginPreferences.saveIsLoggedIn(false)
                 val intent = Intent(requireActivity(), AuthActivity::class.java)
                 requireContext().startActivity(intent)
                 requireActivity().finish()
@@ -95,19 +106,26 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun getUserDetail() {
+    private fun getLoginDetails() {
+        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner,{
+            empId = it.toString()
+            getUserDetail(it.toString())
+
+        })
+    }
+
+    private fun getUserDetail(empID:String) {
 
         viewLifecycleOwner.lifecycleScope.launch {
 
             try {
-                val response = getUserDetailApiCall()
+                val response = getUserDetailApiCall(empID)
 
                 if (response.isSuccessful) {
 
                     val responseData = response.body()
                     if (responseData!!.status.equals("1")){
-
-                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
+                        showToast(mContext, "${responseData.message}")
 
                         name = responseData.first_name
 
@@ -116,26 +134,24 @@ class ProfileFragment : Fragment() {
                          imageUrl = "http://192.168.4.166:8000/${responseData.profile}"
 //                        Glide.with(requireView()).load(imageUrl).into(binding.profileImg)
                     }else{
-                        Toast.makeText(requireContext(), "${responseData.message}", Toast.LENGTH_SHORT).show()
+                        showToast(mContext, "${responseData.message}")
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Response Message ${response.message()}", Toast.LENGTH_SHORT).show()
+                    showToast(mContext, "Response Message ${response.message()}")
                 }
 
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception Occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast(mContext, "Exception Occured ${e.message}")
+
             }
         }
 
     }
 
-    private suspend fun getUserDetailApiCall(): Response<UserDetailModel> {
+    private suspend fun getUserDetailApiCall(empID:String): Response<UserDetailModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getUserDetails("TD001")
+            BaseClient.getInstance.getUserDetails(empID
+            )
         }
     }
 }

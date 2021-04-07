@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentVerifyForgotPassBinding
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,6 +28,7 @@ class VerifyForgotPassFragment : Fragment() {
     lateinit var otpEt2: EditText
     lateinit var otpEt3: EditText
     lateinit var otpEt4: EditText
+    lateinit var mContext: Context
 
     private val args: VerifyForgotPassFragmentArgs by navArgs()
 
@@ -42,6 +45,8 @@ class VerifyForgotPassFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mContext = requireContext()
 
         val phone = args.phoneNumber
 
@@ -88,14 +93,12 @@ class VerifyForgotPassFragment : Fragment() {
                 val response = verifyPhoneOtp(phone, otp)
 
                 if (response.status.equals("1")) {
-
-                    Toast.makeText(context, "On Sucess ${response.message}", Toast.LENGTH_SHORT).show()
+                    showToast(mContext,"On Sucess ${response.message}")
                     val actions =
                         VerifyForgotPassFragmentDirections.actionVerifyForgotPassFragmentToCreateNewPasswordFragment(phone)
                     view.findNavController().navigate(actions)
                 } else {
-
-                    Toast.makeText(context, "not  Sucess ${response.message}", Toast.LENGTH_SHORT).show()
+                    showToast(mContext,"not  Sucess ${response.message}")
 
 
                 }

@@ -64,13 +64,15 @@
         </provider>
 
         <activity android:name=".ui.SplashScreenActivity">
+
+        </activity>
+        <activity android:name=".ui.auth.AuthActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.auth.AuthActivity" />
         <activity android:name=".ui.home.HomePageActivity">
 
         </activity>
@@ -85,6 +87,20 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <service
+            android:name=".services.FCMMessageReceiverServices"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/facebook_icon" />
+
     </application>
+
+
 
 </manifest>

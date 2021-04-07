@@ -79,14 +79,15 @@ interface TDApi {
         @Query("search") search: String
     ): Response<AdminBrandModel>
 
-    @GET("stockItemList")
-    suspend fun getStockItem(
-        @Query("brandName") brandName: String,
+    @GET("getStockList")
+    suspend fun
+            getStockItem(
+        @Query("brand_id") brandId: String,
     ): Response<SearchStockItemModel>
 
     @GET("searchStockItem")
     suspend fun getStockItemList(
-        @Query("brandName") brandName: String,
+        @Query("brand_id") brandId: String,
         @Query("search") search: String,
     ): Response<SearchStockItemModel>
 
@@ -157,6 +158,23 @@ interface TDApi {
     suspend fun uploadNotifationToken(
         @Field("emp_id") emp_id:String,
         @Field("token") token:String
+    ):Response<StatusMessageModel>
+
+    @FormUrlEncoded
+    @POST("addProductToDealer")
+    suspend fun addProductToDealer(
+        @Field("sales_executive_id") sales_executive_id:String,
+        @Field("dealer_id") dealer_id:String,
+        @Field("product_id") product_id:String,
+    ):Response<StatusMessageModel>
+
+    @FormUrlEncoded
+    @POST("insertStock")
+    suspend fun insertStock(
+        @Field("sales_executive_id") sales_executive_id:String,
+        @Field("dealer_id") dealer_id:String,
+        @Field("product_id") product_id:String,
+        @Field("quantity") quantity:String,
     ):Response<StatusMessageModel>
 }
 

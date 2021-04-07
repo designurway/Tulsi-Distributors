@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -49,7 +50,6 @@ class HomePageActivity : AppCompatActivity(), NavToolbarController {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.homeFragment,
-                R.id.addProductFragment,
                 R.id.notificationFragment, R.id.profileFragment
             )
         )
@@ -64,12 +64,17 @@ class HomePageActivity : AppCompatActivity(), NavToolbarController {
         }
 
 //        setLogoutTime()
+
+
+        var title = intent.extras?.getString("Title")
+        if (title != null) {
+           navController.navigate(R.id.notificationFragment)
+        }
     }
 
 
     private fun setLogoutTime() {
 
-        Toast.makeText(this, "Logout time setted", Toast.LENGTH_SHORT).show()
         val calNow = Calendar.getInstance();
         val calendar: Calendar = Calendar.getInstance()
         calendar.setTimeInMillis(System.currentTimeMillis())

@@ -20,8 +20,8 @@
             android:id="@+id/action_homeFragment_to_attendenceFragment"
             app:destination="@id/attendenceFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_stockFragment"
-            app:destination="@id/stockFragment" />
+            android:id="@+id/action_homeFragment_to_stockItemFragment"
+            app:destination="@id/searchStockItemFragment2" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -53,11 +53,7 @@
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
-    <fragment
-        android:id="@+id/addProductFragment"
-        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AddProductFragment"
-        android:label="fragment_add_product"
-        tools:layout="@layout/fragment_add_product" />
+
     <fragment
         android:id="@+id/completedOrderFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.completed_order.CompletedOrderFragment"
@@ -82,11 +78,6 @@
         android:label="fragment_attendence"
         tools:layout="@layout/fragment_attendence" />
     <fragment
-        android:id="@+id/stockFragment"
-        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.search_stock.StockFragment"
-        android:label="fragment_stock"
-        tools:layout="@layout/fragment_stock" />
-    <fragment
         android:id="@+id/aboutUsFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.AboutUsFragment"
         android:label="fragment_about_us"
@@ -100,7 +91,11 @@
         android:id="@+id/supportFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.SupportFragment"
         android:label="fragment_support"
-        tools:layout="@layout/fragment_support" />
+        tools:layout="@layout/fragment_support" >
+        <action
+            android:id="@+id/action_supportFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/termsConditionFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.TermsConditionFragment"
@@ -123,6 +118,9 @@
         <argument
             android:name="routing_id"
             app:argType="string" />
+        <action
+            android:id="@+id/action_addProductListFragment2_to_searchStockItemFragment2"
+            app:destination="@id/searchStockItemFragment2" />
     </fragment>
     <fragment
         android:id="@+id/updateProfileFragment"
@@ -135,6 +133,9 @@
         <argument
             android:name="name"
             app:argType="string" />
+        <action
+            android:id="@+id/action_updateProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/changeNewPassFragment"
@@ -179,6 +180,16 @@
             app:argType="string" />
         <argument
             android:name="purchaseDate"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchStockItemFragment2"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.search_stock.SearchStockItemFragment"
+        android:label="fragment_search_stock_item"
+        tools:layout="@layout/fragment_search_stock_item" >
+
+        <argument
+            android:name="dealerId"
             app:argType="string" />
     </fragment>
 </navigation>

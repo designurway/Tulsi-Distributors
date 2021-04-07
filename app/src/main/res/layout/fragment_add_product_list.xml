@@ -15,6 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+
     <ImageView
         android:id="@+id/sadIc"
         android:layout_width="100dp"
@@ -33,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addProdSearch"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@+id/addProductBtn">
         <TextView
             android:id="@+id/shop_name_tv"
             android:layout_width="0dp"
@@ -43,7 +44,7 @@
             android:layout_marginTop="10dp"
             android:text="Shubham The Electronic Shopee"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +59,7 @@
             android:layout_marginEnd="10dp"
             android:text="Showroom Address: 192, B Block, 10th Cross,Akkamahadevi Rd, opp. Police Station, Block A, JP Nagar,Mysuru, Karnataka 570008"
             android:textColor="@color/white"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shop_name_tv" />
@@ -67,44 +69,43 @@
             android:id="@+id/list_rv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shop_address_tv"
-            app:layout_constraintVertical_bias="0.0"
             tools:listitem="@layout/add_product_items" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/show_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show Products"
-            android:textSize="15sp"
-            android:layout_marginRight="10dp"
-            android:textColor="@color/black"
-            android:background="@drawable/btn_bg"
-            android:backgroundTint="@color/white"
-            android:padding="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/add_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Products"
-            android:textSize="15sp"
-            android:layout_marginRight="10dp"
-            android:textColor="@color/black"
-            android:background="@drawable/btn_bg"
-            android:backgroundTint="@color/white"
-            android:padding="2dp"
-            app:layout_goneMarginRight="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/show_btn"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/show_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Products"
+        android:textSize="15sp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/black"
+        android:background="@drawable/btn_bg"
+        android:backgroundTint="@color/white"
+        android:padding="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/addProductBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Products"
+        android:textSize="15sp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/black"
+        android:background="@drawable/btn_bg"
+        android:backgroundTint="@color/white"
+        android:padding="2dp"
+        app:layout_goneMarginRight="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/show_btn"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="135dp"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="15dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +48,7 @@
                 android:paddingEnd="10dp"
                 android:paddingBottom="3dp"
                 android:text="Pending"
+                android:textSize="12sp"
                 android:textColor="@color/white"
                 app:layout_constraintStart_toEndOf="@id/shopImgCard"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +74,7 @@
                 android:layout_marginEnd="25dp"
                 android:text="The Corner Store."
                 android:textColor="@color/black"
-                android:textSize="17sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/shopImgCard"
@@ -88,6 +89,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="5dp"
                 android:paddingBottom="5dp"
+                android:textSize="10sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/shopImgCard"
                 app:layout_constraintTop_toBottomOf="@id/shopName" />

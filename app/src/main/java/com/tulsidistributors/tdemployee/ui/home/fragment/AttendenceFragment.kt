@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -40,6 +41,7 @@ class AttendenceFragment : Fragment() {
     lateinit var userLoginPreferences: UserLoginPreferences
     lateinit var empId: String
     lateinit var mContext: Context
+    lateinit var logoutTime: String
 
 
     override fun onCreateView(
@@ -132,7 +134,7 @@ class AttendenceFragment : Fragment() {
 
                         val loginTime =
                             Common().getTime(resposeData?.data?.login_time.toString())
-                        val logoutTime =
+                        logoutTime =
                             Common().getTime(resposeData?.data?.logout_time.toString())
 
                         binding.attendName.text = resposeData?.data?.first_name
@@ -143,15 +145,20 @@ class AttendenceFragment : Fragment() {
                         Glide.with(requireView()).load(resposeData?.data?.profile)
                             .into(binding.atteImg)
 
+                        if (!logoutTime.equals("0000-00-00 00:00:00") || !logoutTime.equals("00:00:00")) {
+                            val calendar = Calendar.getInstance()
+                            val mdformat = SimpleDateFormat("HH:mm:ss")
+                            logoutTime = mdformat.format(calendar.time)
 
-                        val timeDiff = TimeDiffrence(loginTime, logoutTime)
+                        }
+
+                        val timeDiff = TimeDiffrence("12:05:41", "17:43:41")
 
                         val totalTime = timeDiff.getTimeDiffrence()
 
-
                         binding.totalTime.text = totalTime
 
-                        showToast(mContext, "Total Time Diffrence ${totalTime}")
+                        showToast(mContext, "Total Time Diffrence ${logoutTime}")
 
 
                     } else {

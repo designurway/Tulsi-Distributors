@@ -1,17 +1,21 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment.setting
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
-import com.tulsidistributors.tdemployee.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.asLiveData
+import androidx.navigation.findNavController
 import com.tulsidistributors.tdemployee.databinding.FragmentSupportBinding
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,9 +25,12 @@ import retrofit2.Response
 class SupportFragment : Fragment() {
 
     lateinit var binding: FragmentSupportBinding
-    lateinit var empId: EditText
+    lateinit var empIdEt: EditText
     lateinit var empQuery: EditText
     lateinit var submitQuery: Button
+    lateinit var mContext: Context
+    lateinit var userLoginPreferences: UserLoginPreferences
+    lateinit var EmpId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,41 +44,50 @@ class SupportFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        empId=binding.employeeIdEt
-        empQuery=binding.descriptionEt
-        submitQuery=binding.sendBtn
+        mContext = requireContext()
+
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
+
+        getUserLoginDetail()
+
+        empIdEt = binding.employeeIdEt
+        empQuery = binding.descriptionEt
+        submitQuery = binding.sendBtn
 
         submitQuery.setOnClickListener {
-            val id=empId.text.toString().trim()
-            val query=empQuery.text.toString().trim()
+            val id = empIdEt.text.toString().trim()
+            val query = empQuery.text.toString().trim()
 
-            if (id.isEmpty()){
-                empId.error="Required fields"
-                empId.requestFocus()
+            if (id.isEmpty()) {
+                empIdEt.error = "Required fields"
+                empIdEt.requestFocus()
                 return@setOnClickListener
-            }
-
-            else if(query.isEmpty()){
-                empQuery.error="Required fields"
+            } else if (query.isEmpty()) {
+                empQuery.error = "Required fields"
                 empQuery.requestFocus()
                 return@setOnClickListener
-            }
-            else{
+            } else {
 
 
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
 
-                        val response=postQuery(id,query)
-                        if(response.isSuccessful){
-                            Toast.makeText(requireContext(), response.body()!!.message, Toast.LENGTH_SHORT).show()
-                        }else{
-                            Toast.makeText(requireContext(), response.body()!!.message, Toast.LENGTH_SHORT).show()
+                        val response = postQuery(id, query)
+                        if (response.isSuccessful) {
+
+                            showToast(mContext, response.body()!!.message)
+                            val action =
+                                SupportFragmentDirections.actionSupportFragmentToHomeFragment()
+                            requireView().findNavController()
+                                .navigate(action)
+
+                        } else {
+                            showToast(mContext, response.body()!!.message)
 
                         }
 
-                    }catch (e:Exception){
-                        Toast.makeText(requireContext(), "Exeption Occured ${e.message}", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        showToast(mContext, "Exeption Occured ${e.message}")
 
                     }
                 }
@@ -82,11 +98,17 @@ class SupportFragment : Fragment() {
 
     }
 
-    suspend private fun postQuery(empId:String,message:String): Response<StatusMessageModel> {
-        return withContext(Dispatchers.IO){
+    suspend private fun postQuery(empId: String, message: String): Response<StatusMessageModel> {
+        return withContext(Dispatchers.IO) {
             BaseClient.getInstance.postQuery(empId, message)
         }
     }
 
+    fun getUserLoginDetail() {
+        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner, {
+            EmpId = it.toString()
+            empIdEt.setText(it.toString())
+        })
+    }
 
 }

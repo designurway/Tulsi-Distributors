@@ -1,6 +1,7 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -66,6 +67,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     lateinit var empId: String
     lateinit var token:String
     lateinit var currentDate:String
+    lateinit var mContext:Context
+
 
     companion object {
         private const val CAMERA_PREMISSION_CODE = 1
@@ -84,6 +87,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mContext = requireContext()
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
@@ -91,7 +95,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
          currentDate = Common().getCurrentDate("yyyy-MM-dd")
 
-        showToast(requireContext(),"Current Date : $currentDate")
+        showToast(mContext,"Current Date : $currentDate")
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
@@ -132,9 +136,9 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                 generateToken()
                 uploadSelfie()
             } else {
-//                Toast.makeText(requireContext(), "Select Image", Toast.LENGTH_SHORT).show()
-                showToast(requireContext(),"Current Date : $currentDate")
-//                Toast.makeText(requireContext(), "Next Button Clicked $latitude $longtitude", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(mContext, "Select Image", Toast.LENGTH_SHORT).show()
+                showToast(mContext,"Current Date : $currentDate")
+//                Toast.makeText(mContext, "Next Button Clicked $latitude $longtitude", Toast.LENGTH_SHORT).show()
 
             }
         }
@@ -223,6 +227,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                         "Sucess  ${responseData!!.message}",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    userLoginPreferences.saveIsLoggedIn(true)
 
                     val intent = Intent(requireContext(), HomePageActivity::class.java)
                     startActivity(intent)
@@ -358,6 +364,15 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     }
 
     private fun getUserDetail() {
+
+        userLoginPreferences.isLoggedIn.asLiveData().observe(viewLifecycleOwner,{
+            if (it==true){
+                val
+                        intent = Intent(requireContext(), HomePageActivity::class.java)
+                startActivity(intent)
+            }
+        })
+
         userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner) {
             empId = it.toString()
             Toast.makeText(requireContext(), "EmpId : $empId", Toast.LENGTH_SHORT).show()

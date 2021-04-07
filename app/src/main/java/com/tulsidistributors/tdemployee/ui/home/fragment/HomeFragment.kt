@@ -8,15 +8,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.asLiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentHomeBinding
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.ui.adapter.HomeAdapter
 import com.tulsidistributors.tdemployee.model.home.CategoryModel
 import com.tulsidistributors.tdemployee.ui.adapter.HomeItemClicked
+import com.tulsidistributors.tdemployee.utils.showToast
 
 
 class HomeFragment : Fragment(), HomeItemClicked {
@@ -25,6 +29,9 @@ class HomeFragment : Fragment(), HomeItemClicked {
     lateinit var categoryRv: RecyclerView
     var categoryAdapter: HomeAdapter? = null
     lateinit var action: NavDirections
+    lateinit var userLoginPreferences: UserLoginPreferences
+    lateinit var brandId:String
+    lateinit var mContext: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +44,12 @@ class HomeFragment : Fragment(), HomeItemClicked {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mContext = requireContext()
+
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
+
+        getLoginDetails()
 
         categoryRv = binding.categoryRv
 
@@ -79,6 +92,12 @@ class HomeFragment : Fragment(), HomeItemClicked {
 
     }
 
+    private fun getLoginDetails() {
+        userLoginPreferences.brandIdFlow.asLiveData().observe(viewLifecycleOwner,{
+            brandId = it.toString()
+        })
+    }
+
     override fun homeItemClickedListner(name: String) {
 
         when (name) {
@@ -92,8 +111,9 @@ class HomeFragment : Fragment(), HomeItemClicked {
             }
 
             "Stocks" -> {
-                action = HomeFragmentDirections.actionHomeFragmentToStockFragment()
+                action = HomeFragmentDirections.actionHomeFragmentToStockItemFragment("none")
                 requireView().findNavController().navigate(action)
+                showToast(mContext,brandId)
             }
 
             "Attendance" -> {

@@ -1,23 +1,30 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment.search_stock
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.widget.doOnTextChanged
+import android.widget.Button
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentSearchStockItemBinding
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
+import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemData
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
+import com.tulsidistributors.tdemployee.ui.adapter.AddProductItemClickListner
+import com.tulsidistributors.tdemployee.ui.adapter.OnAddItemClickListner
 import com.tulsidistributors.tdemployee.ui.adapter.SearchStockItemAdapter
-import kotlinx.coroutines.CoroutineScope
+import com.tulsidistributors.tdemployee.utils.noDataFound
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,11 +32,17 @@ import retrofit2.Response
 import java.lang.Exception
 
 
-class SearchStockItemFragment : Fragment() {
+class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
 
     lateinit var binding: FragmentSearchStockItemBinding
     lateinit var searchStockRecycler: RecyclerView
-    val args: SearchStockItemFragmentArgs by navArgs()
+    lateinit var brandName:String
+    lateinit var userLoginPreferences: UserLoginPreferences
+    lateinit var mContext:Context
+    lateinit var brandId:String
+    val args:SearchStockItemFragmentArgs by navArgs()
+    lateinit var dealerId:String
+    lateinit var saleExecutiveId:String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,115 +56,159 @@ class SearchStockItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mContext = requireContext()
+        dealerId = args.dealerId
+
+
 //        brandName = args.brandName
+
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
+
+        getLoginDetail()
+
+
 
         searchStockRecycler = binding.searchStockRecycler
 
         val layoutManger = LinearLayoutManager(requireContext())
         searchStockRecycler.layoutManager = layoutManger
 
-        binding.searchViewItem.searchItemEt.doOnTextChanged { text, start, before, count ->
+        binding.searchViewItem.searchItemEt.doAfterTextChanged {query ->
 
-            searchStockItem(text.toString(),"HAIER")
+            searchStockItem(query.toString(),brandId)
         }
 
 
-        getStockItem("HAIER")
-
     }
 
-    private fun getStockItem(brand:String) {
 
-        Toast.makeText(requireContext(), "$brand", Toast.LENGTH_SHORT).show()
+
+    private fun getStockItem(brandId:String) {
+        showToast(mContext, "$brandId")
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = getStockItemApiCall(brand)
+                val response = getStockItemApiCall(brandId)
 
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     if (responseData?.status.equals("1")) {
 
-                        val searchItem: ArrayList<SearchStockItemData> = responseData!!.stock_items
-                        val adapter = SearchStockItemAdapter(searchItem)
+                        val searchItem: ArrayList<SearchStockItemData> = responseData!!.stock_list
+                        val adapter = SearchStockItemAdapter(searchItem,this@SearchStockItemFragment)
                         searchStockRecycler.adapter = adapter
 
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "${responseData?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showToast(mContext, "${responseData?.message}")
+
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Response Code ${response.code()} and Response Message ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast(mContext, "Response Code ${response.code()} and Response Message ${response.message()}")
+
                 }
 
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast(mContext, "Exception occured ${e.message}")
+
             }
         }
     }
 
-    private suspend fun getStockItemApiCall(brand:String): Response<SearchStockItemModel> {
+    private suspend fun getStockItemApiCall(brandId:String): Response<SearchStockItemModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getStockItem(brand)
+            BaseClient.getInstance.getStockItem(brandId)
         }
     }
 
 
-    private fun searchStockItem(searchQuery: String,brandNam:String) {
+    private fun searchStockItem(searchQuery: String, brandId:String) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = searchStockItme(searchQuery,brandNam)
+                val response = searchStockItme(searchQuery,brandId)
 
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     if (responseData?.status.equals("1")) {
 
-                        val searchItem: ArrayList<SearchStockItemData> = responseData!!.stock_items
-                        val adapter = SearchStockItemAdapter(searchItem)
+                        val searchItem: ArrayList<SearchStockItemData> = responseData!!.stock_list
+                        val adapter = SearchStockItemAdapter(searchItem,this@SearchStockItemFragment)
                         searchStockRecycler.adapter = adapter
 
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "${responseData?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showToast(mContext, "${responseData?.message}")
+
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Response Code ${response.code()} and Response Message ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast(mContext, "Response Code ${response.code()} and Response Message ${response.message()}")
+
                 }
 
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast(mContext, "Exception occured ${e.message}")
+
             }
         }
 
     }
 
-    private suspend fun searchStockItme(search: String,brandNam:String): Response<SearchStockItemModel> {
+    private suspend fun searchStockItme(search: String,brandId:String): Response<SearchStockItemModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getStockItemList(brandName = brandNam, search = search)
+            BaseClient.getInstance.getStockItemList(brandId = brandId, search = search)
         }
     }
+
+    private fun getLoginDetail() {
+      userLoginPreferences.brandIdFlow.asLiveData().observe(viewLifecycleOwner,{
+          brandId = it.toString()
+          showToast(mContext,it.toString())
+          getStockItem(brandId)
+      })
+
+        userLoginPreferences.saleExecutiveIdFlow.asLiveData().observe(viewLifecycleOwner,{
+            saleExecutiveId = it.toString()
+        })
+    }
+
+    override fun onAddBtnClicked(
+        positon: Int,
+        productId: String,
+        addItemBtn: Button,
+        alreadyAddedBtn: Button
+    ) {
+        addProductToDealer(saleExecutiveId,dealerId,productId,addItemBtn,alreadyAddedBtn)
+    }
+
+    fun addProductToDealer(saleExeId:String,dealerId:String,productId:String,addItemBtn:Button,alreadyAddedBtn:Button){
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+
+                val response = addProductToDealerApiCall(saleExeId, dealerId, productId)
+
+                if (response.isSuccessful){
+                    val responseData = response.body()
+                    showToast(mContext, responseData!!.message)
+
+                    // hiding the view
+                    noDataFound(alreadyAddedBtn,addItemBtn)
+
+                }else{
+                    showToast(mContext,"Response Error ${response.message()}")
+                }
+
+            }catch (e:Exception){
+                showToast(mContext,"Execption Occured ${e.message}")
+            }
+        }
+    }
+
+
+    suspend fun addProductToDealerApiCall(saleExeId:String,dealerId:String,productId:String):Response<StatusMessageModel>{
+        return  withContext(Dispatchers.IO){
+            BaseClient.getInstance.addProductToDealer(sales_executive_id = saleExeId,dealer_id = dealerId,product_id = productId)
+        }
+    }
+
+
 
 }

@@ -1,20 +1,25 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment.completed_order
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.asLiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentCompletedOrderBinding
+import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
+import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.completed_order.CompletedOderModel
 import com.tulsidistributors.tdemployee.model.completed_order.CompletedOrderData
 import com.tulsidistributors.tdemployee.ui.adapter.CompletedOrderAdapter
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +33,9 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
     lateinit var binding: FragmentCompletedOrderBinding
     lateinit var cOrderRecyclerView: RecyclerView
     lateinit var compledtedAdapter: CompletedOrderAdapter
+    lateinit var userLoginPreferences: UserLoginPreferences
+    lateinit var EmpId:String
+    lateinit var mContext:Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,14 +50,23 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mContext =  requireContext()
+
+        userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
+
         cOrderRecyclerView = binding.cOrderRecyclerView
 
         val layoutManager = LinearLayoutManager(requireContext())
         cOrderRecyclerView.layoutManager = layoutManager
 
+        getLoginDetail()
+
+    }
+
+    fun getCompletedOrder(empId:String){
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val response = getCompletedOrder()
+                val response = getCompletedOrderApiCall(empId)
                 if (response.isSuccessful) {
                     val data = response.body()
 
@@ -60,27 +77,20 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
                     cOrderRecyclerView.adapter = compledtedAdapter
 
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Response Code : ${response.code()} and Respone Message : ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast(mContext, "Response Code : ${response.code()} and Respone Message : ${response.message()}")
+
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Exception occured ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast(mContext, "Exception occured ${e.message}")
+
+
             }
         }
-
-
     }
 
-    suspend private fun getCompletedOrder(): Response<CompletedOderModel> {
+    suspend private fun getCompletedOrderApiCall(empId:String): Response<CompletedOderModel> {
         return withContext(Dispatchers.IO) {
-            BaseClient.getInstance.getCompletedOrder("TD001")
+            BaseClient.getInstance.getCompletedOrder(empId)
         }
     }
 
@@ -92,6 +102,14 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
             )
 
         requireView().findNavController().navigate(action)
+    }
+
+    fun getLoginDetail(){
+        userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner,{
+            EmpId = it.toString()
+
+            getCompletedOrder(it.toString())
+        })
     }
 
 

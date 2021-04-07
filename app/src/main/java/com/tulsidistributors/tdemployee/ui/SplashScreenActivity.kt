@@ -25,25 +25,24 @@ class SplashScreenActivity : AppCompatActivity() {
 
         loginPrefrence = UserLoginPreferences(dataStore)
 
-        getUserDetail()
+        var title = intent.extras?.getString("Title")
+
+        Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
+
+        if (title != null) {
+            val intent = Intent(this, HomePageActivity::class.java)
+            intent.putExtra("Title",title)
+            startActivity(intent)
+            finish()
+        }else{
+            getUserDetail()
+        }
 
     }
 
     private fun getUserDetail() {
 
-   loginPrefrence.empIdFlow.asLiveData().observe(this) { empId ->
-            Toast.makeText(this, "EmpId ${empId}", Toast.LENGTH_SHORT).show()
 
-            if (empId==null){
-                val intent = Intent(this,AuthActivity::class.java)
-                startActivity(intent)
-                finish()
-            }else{
-                val intent = Intent(this,HomePageActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
 
     }
 

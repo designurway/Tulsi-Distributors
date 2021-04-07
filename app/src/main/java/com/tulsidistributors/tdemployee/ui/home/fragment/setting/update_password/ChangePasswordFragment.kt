@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment.setting.update_password
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.tulsidistributors.tdemployee.databinding.FragmentChangePasswordBindin
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.ForgetPasswordFragmentDirections
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,6 +28,7 @@ class ChangePasswordFragment : Fragment() {
     lateinit var binding:FragmentChangePasswordBinding
     lateinit var empPhone: EditText
     lateinit var generateBtn: Button
+    lateinit var mContext: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +43,8 @@ class ChangePasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mContext = requireContext()
 
         empPhone = binding.newPassEmailEt
         generateBtn = binding.sendOtp
@@ -62,24 +67,22 @@ class ChangePasswordFragment : Fragment() {
                     val responseData = response.body()
                     if (response.isSuccessful){
                         if (responseData?.status.equals("1")){
-                            Toast.makeText(requireContext(), "${responseData?.message}", Toast.LENGTH_SHORT).show()
+                            showToast(mContext, "${responseData?.message}")
                             val action = ChangePasswordFragmentDirections.actionChangePasswordFragmentToVerifyChangePassFragment(
                                 phone
                             )
                             view.findNavController().navigate(action)
                         }else{
-                            Toast.makeText(requireContext(), "On Fa ${responseData?.message}", Toast.LENGTH_SHORT).show()
+                            showToast(mContext, "On Fa ${responseData?.message}")
                         }
                     }else{
-                        Toast.makeText(requireContext(), "Response Code ${response.code()} Response Message ${response.message()}", Toast.LENGTH_SHORT).show()
+                        showToast(mContext,  "Response Code ${response.code()} Response Message ${response.message()}")
+
                     }
 
                 } catch (e: Exception) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Exception Occured ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast(mContext, "Exception Occured ${e.message}")
+
                 }
 
             }

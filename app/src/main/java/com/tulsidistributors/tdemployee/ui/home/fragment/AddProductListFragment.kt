@@ -12,10 +12,10 @@ import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -76,6 +76,9 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     lateinit var sadIc: ImageView
     lateinit var mainLayout: ConstraintLayout
     lateinit var mContext: Context
+    lateinit var shopAddressTv: TextView
+    lateinit var shopNameTv: TextView
+    lateinit var addProductBtn: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,6 +109,9 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         show_btn = binding.showBtn
         sadIc = binding.sadIc
         mainLayout = binding.mainLayout
+        shopAddressTv = binding.shopAddressTv
+        shopNameTv = binding.shopNameTv
+        addProductBtn = binding.addProductBtn
 
         binding.shopAddressTv.text = shop_address
         binding.shopNameTv.text = shopName
@@ -120,7 +126,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         val layoutManager = LinearLayoutManager(requireContext())
         productRecycler.layoutManager = layoutManager
 
-        binding.addProdSearch.searchItemEt.doAfterTextChanged {text->
+        binding.addProdSearch.searchItemEt.doAfterTextChanged { text ->
 
             if (text!!.length >= 3) {
                 searchDealerProductItem(dealer_id, searchQuery = text.toString())
@@ -133,6 +139,33 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
             openAddedItemBottomSheet()
         }
 
+        addProductBtn.setOnClickListener {
+            val action =
+                AddProductListFragmentDirections.actionAddProductListFragment2ToSearchStockItemFragment2(
+                    dealer_id
+                )
+            findNavController().navigate(action)
+        }
+
+
+        productRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+
+                /* if (dy > 0) {
+                     //Scrolling down
+                     shopAddressTv.visibility = View.GONE
+                     shopNameTv.visibility = View.GONE
+
+                 } else if (dy < 0) {
+                     shopAddressTv.visibility = View.VISIBLE
+                     shopNameTv.visibility = View.VISIBLE
+                 }
+             */
+
+
+            }
+        })
 
     }
 
@@ -219,11 +252,14 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
     private fun placeOrder() {
 
+        val purchaseDate = Common().getCurrentDate("yyyy-MM-dd")
         val placeOrderModel = PlaceOrderModel(
             refrenceId,
             dealer_id,
+            sales_executive_id = saleExectiveId,
             totalPrice.toString(),
             "500",
+            purchaseDate,
             "100",
             placeOderList
         )
@@ -248,6 +284,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
             } catch (e: java.lang.Exception) {
                 noDataFound(sadIc, mainLayout)
+                binding.addProductBtn.visibility = View.VISIBLE
                 showToast(mContext, "Execption Occured ${e.message}")
 
             }
@@ -474,13 +511,15 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         }
     }
 
-    override fun openDialogBox(oldQnty: TextView, position: Int) {
+    override fun openDialogBox(oldQnty: TextView, position: Int, product_id: String) {
         oldQntyTv = oldQnty
-        showDialog("Qnt")
+        showDialog("Qnt",product_id)
+
+
     }
 
 
-    private fun showDialog(title: String) {
+    private fun showDialog(title: String,product_id:String) {
         /* val binding:AddQtyDialogBinding = AddQtyDialogBinding
              .inflate(LayoutInflater.from(getContext()))*/
 
@@ -496,12 +535,59 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         yesBtn.setOnClickListener {
             dialog.dismiss()
             oldQntyTv.text = body.text
+
+            updateStock(
+                saleExtId = saleExectiveId,
+                dealerId = dealer_id,
+                productId = product_id,
+                quantity =  body.text.toString()
+            )
         }
         noBtn.setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()
 
+    }
+
+
+
+    private fun updateStock(
+        saleExtId: String,
+        dealerId: String,
+        productId: String,
+        quantity: String
+    ) {
+        showToast(mContext,"Quantity $quantity")
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = updateStockApiCall(saleExtId, dealerId, productId, quantity)
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    showToast(mContext, responseData!!.message)
+                } else {
+                    showToast(mContext, "Response Error ${response.message()}")
+                }
+            } catch (e: Exception) {
+                showToast(mContext, "Exception Occured ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun updateStockApiCall(
+        saleExtId: String,
+        dealerId: String,
+        productId: String,
+        quantity: String
+    ): Response<StatusMessageModel> {
+        return withContext(Dispatchers.IO) {
+            BaseClient.getInstance.insertStock(
+                sales_executive_id = saleExtId,
+                dealer_id = dealerId,
+                product_id = productId,
+                quantity = quantity
+            )
+        }
     }
 
 

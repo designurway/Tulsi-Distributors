@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment.setting.update_password
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.CreateNewPasswordFragmentArgs
 import com.tulsidistributors.tdemployee.ui.auth.fragment.forget_pass.CreateNewPasswordFragmentDirections
+import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,6 +33,7 @@ class ChangeNewPassFragment : Fragment() {
     lateinit var passwordEt: EditText
     lateinit var confirmpwdEt: EditText
     lateinit var changePwdBtn: Button
+    lateinit var mContext: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +47,8 @@ class ChangeNewPassFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mContext = requireContext()
 
         val phone = args.phone
         passwordEt = binding.newPasswordEt
@@ -65,23 +70,22 @@ class ChangeNewPassFragment : Fragment() {
                 confirmpwdEt.requestFocus()
                 return@setOnClickListener
             } else if (!password.equals(confirmPwd)) {
-                Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                showToast(mContext,"Passwords do not match")
             }
-
-            Toast.makeText(requireContext(), "Phone $phone Password $password", Toast.LENGTH_SHORT).show()
+            showToast(mContext,"Phone $phone Password $password")
 
             CoroutineScope(Dispatchers.Main).launch {
                 val response = updateNewPassword(phone, password)
 
 
                 if (response.status.equals("1")) {
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    showToast(mContext, response.message)
                     val action =
                         ChangeNewPassFragmentDirections.actionChangeNewPassFragmentToProfileFragment()
                     view.findNavController().navigate(action)
 
                 } else {
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    showToast(mContext, response.message)
 
                 }
             }

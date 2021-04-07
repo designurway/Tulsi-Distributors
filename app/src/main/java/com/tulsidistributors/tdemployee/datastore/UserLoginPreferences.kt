@@ -1,13 +1,10 @@
 package com.tulsidistributors.tdemployee.datastore
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -24,8 +21,21 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
         val EMAIL = stringPreferencesKey("email")
         val PHONE = stringPreferencesKey("phone_number")
         val ROLE = stringPreferencesKey("role")
+        val BRAND_NAME = stringPreferencesKey("brand_name")
+        val BRAND_ID = stringPreferencesKey("brand_id")
+        val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+        val LOGGED_FIRST_TIME = booleanPreferencesKey("loggedInFirstTime")
 
 
+    }
+
+
+    suspend fun saveIsLoggedIn(
+        isLoggedIn:Boolean
+    ){
+        mDataStore.edit {  preferences ->
+            preferences[IS_LOGGED_IN] = isLoggedIn
+        }
     }
 
     suspend fun saveUserLoginDetail(
@@ -34,7 +44,10 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
         distributor_id: String,
         email: String,
         phone: String,
-        role: String
+        role: String,
+        brand_name: String,
+        brand_id: String,
+        loggedInFirstTime:Boolean
     ) {
 
         mDataStore.edit { preferences ->
@@ -44,7 +57,9 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
             preferences[EMAIL] = email
             preferences[PHONE] = phone
             preferences[ROLE] = role
-
+            preferences[BRAND_NAME] = brand_name
+            preferences[BRAND_ID] = brand_id
+            preferences[LOGGED_FIRST_TIME] = loggedInFirstTime
 
         }
 
@@ -71,6 +86,26 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
 
     val emailFlow: Flow<String?> = mDataStore.data.map { preferences ->
         preferences[EMAIL]
+    }
+
+    val brandNameFlow: Flow<String?> = mDataStore.data.map { preferences ->
+        preferences[BRAND_NAME]
+    }
+
+    val brandIdFlow:Flow<String?> = mDataStore.data.map {  preferences ->
+        preferences[BRAND_ID]
+    }
+
+    val phoneFlow:Flow<String?> = mDataStore.data.map {  preferences ->
+        preferences[PHONE]
+    }
+
+    val isLoggedIn:Flow<Boolean?> = mDataStore.data.map {  preferences ->
+        preferences[IS_LOGGED_IN]
+    }
+
+    val loggedInFirstTime:Flow<Boolean?> = mDataStore.data.map {  preferences ->
+        preferences[LOGGED_FIRST_TIME]
     }
 }
 
