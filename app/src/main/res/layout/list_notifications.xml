@@ -36,10 +36,10 @@
             <ImageView
                 android:id="@+id/user_profile_iv"
                 android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="20dp"
                 android:src="@drawable/user"
-                app:layout_constraintBottom_toBottomOf="@id/view_line"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view_line"
                 app:layout_constraintTop_toBottomOf="@id/view_line"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -75,7 +75,7 @@
                 android:id="@+id/date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:text="2020-2-21"
                 android:textColor="@color/white"
                 android:textSize="12sp"

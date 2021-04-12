@@ -25,6 +25,7 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
         val BRAND_ID = stringPreferencesKey("brand_id")
         val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         val LOGGED_FIRST_TIME = booleanPreferencesKey("loggedInFirstTime")
+        val PERMISSION = booleanPreferencesKey("permission")
 
 
     }
@@ -35,6 +36,14 @@ class UserLoginPreferences(val mDataStore: DataStore<Preferences>) {
     ){
         mDataStore.edit {  preferences ->
             preferences[IS_LOGGED_IN] = isLoggedIn
+        }
+    }
+
+    suspend fun checkPremission(
+        permission: Boolean
+    ){
+        mDataStore.edit {  preferences ->
+            preferences[PERMISSION] = permission
         }
     }
 

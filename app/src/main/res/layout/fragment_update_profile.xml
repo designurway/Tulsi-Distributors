@@ -23,7 +23,7 @@
         android:id="@+id/profileImg"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/profile_img"
+        tools:src="@drawable/profile_img"
         app:civ_border_color="@color/white"
         app:civ_border_width="1dp"
         android:foreground="@drawable/circle"

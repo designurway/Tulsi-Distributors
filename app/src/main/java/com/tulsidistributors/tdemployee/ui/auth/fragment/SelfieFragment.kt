@@ -14,8 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
@@ -23,9 +23,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
-import com.leo.simplearcloader.ArcConfiguration
-import com.leo.simplearcloader.SimpleArcDialog
-import com.leo.simplearcloader.SimpleArcLoader
 import com.tulsidistributors.tdemployee.databinding.FragmentSelfieBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
 import com.tulsidistributors.tdemployee.datastore.dataStore
@@ -65,9 +62,19 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     private lateinit var locationCallback: LocationCallback
     lateinit var userLoginPreferences: UserLoginPreferences
     lateinit var empId: String
-    lateinit var token:String
-    lateinit var currentDate:String
-    lateinit var mContext:Context
+    lateinit var token: String
+    lateinit var currentDate: String
+    lateinit var mContext: Context
+
+    private var permissionsRequired = arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+    private val PERMISSION_CALLBACK_CONSTANT = 100
+
 
 
     companion object {
@@ -91,11 +98,13 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
+
+
         getUserDetail()
 
-         currentDate = Common().getCurrentDate("yyyy-MM-dd")
+        currentDate = Common().getCurrentDate("yyyy-MM-dd")
 
-        showToast(mContext,"Current Date : $currentDate")
+        showToast(mContext, "Current Date : $currentDate")
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
@@ -112,20 +121,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
         binding.selfieImage.setOnClickListener {
 
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    android.Manifest.permission.CAMERA
-                ) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                takeSelife()
-            } else {
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(android.Manifest.permission.CAMERA),
-                    REQUEST_CODE
-                )
-            }
+            requestPermission()
         }
 
         binding.nextBtn.setOnClickListener {
@@ -137,7 +133,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                 uploadSelfie()
             } else {
 //                Toast.makeText(mContext, "Select Image", Toast.LENGTH_SHORT).show()
-                showToast(mContext,"Current Date : $currentDate")
+                showToast(mContext, "Current Date : $currentDate")
 //                Toast.makeText(mContext, "Next Button Clicked $latitude $longtitude", Toast.LENGTH_SHORT).show()
 
             }
@@ -149,21 +145,20 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     private fun generateToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-              showToast(requireContext(),"Fetching FCM registration token failed")
+                showToast(requireContext(), "Fetching FCM registration token failed")
                 return@OnCompleteListener
             }
 
             // Get new FCM registration token
-             token = task.result
+            token = task.result
 
 
-            showToast(requireContext(),token)
+            showToast(requireContext(), token)
 
             uploadNotifationToken(token)
         })
 
     }
-
 
 
     private fun uploadNotifationToken(token: String) {
@@ -187,12 +182,11 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         }
     }
 
-    private suspend fun uploadNotificationTokenApiCall(token:String): Response<StatusMessageModel> {
+    private suspend fun uploadNotificationTokenApiCall(token: String): Response<StatusMessageModel> {
         return withContext(Dispatchers.IO) {
             BaseClient.getInstance.uploadNotifationToken(emp_id = empId, token = token)
         }
     }
-
 
 
     private fun uploadSelfie() {
@@ -232,6 +226,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
                     val intent = Intent(requireContext(), HomePageActivity::class.java)
                     startActivity(intent)
+                    requireActivity().finish()
 
                 } else {
                     Toast.makeText(
@@ -255,8 +250,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         body: UploadImageRequestBody
     ): Response<StatusMessageModel> {
 
-     /*   Toast.makeText(requireContext(), "Upload Selife $latitude $longtitude", Toast.LENGTH_SHORT)
-            .show()*/
+        /*   Toast.makeText(requireContext(), "Upload Selife $latitude $longtitude", Toast.LENGTH_SHORT)
+               .show()*/
 
         return withContext(Dispatchers.IO) {
             BaseClient.getInstance.uploadSelfie(
@@ -323,7 +318,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         if (requestCode == REQUEST_CODE) {
             binding.selfieImage.setImageURI(uri)
         } else {
-            Toast.makeText(requireContext(), "Failed", Toast.LENGTH_SHORT).show()
+            showToast(mContext,"Failed")
         }
     }
 
@@ -341,23 +336,6 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // if premission granted then we need camera functionally
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(intent, REQUEST_CODE)
-            } else {
-                Toast.makeText(requireContext(), "Premssion Dined", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
     override fun onProgressUpdate(percentage: Int) {
 
@@ -365,8 +343,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
     private fun getUserDetail() {
 
-        userLoginPreferences.isLoggedIn.asLiveData().observe(viewLifecycleOwner,{
-            if (it==true){
+        userLoginPreferences.isLoggedIn.asLiveData().observe(viewLifecycleOwner, {
+            if (it == true) {
                 val
                         intent = Intent(requireContext(), HomePageActivity::class.java)
                 startActivity(intent)
@@ -406,14 +384,127 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
     }
 
+
+    private fun requestPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                mContext,
+                permissionsRequired[0]
+            ) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(
+                mContext,
+                permissionsRequired[1]
+            ) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(
+                mContext,
+                permissionsRequired[2]
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    permissionsRequired[0]
+                )
+                || ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    permissionsRequired[1]
+                )
+                || ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    permissionsRequired[2]
+                )
+            ) {
+                //Show Information about why you need the permission
+                getAlertDialog()
+            } else {
+                //just request the permission
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    permissionsRequired,
+                    PERMISSION_CALLBACK_CONSTANT
+                )
+            }
+
+            //   txtPermissions.setText("Permissions Required")
+
+
+        } else {
+            //You already have the permission, just go ahead.
+            showToast(mContext, "Allowed All Permissions")
+            takeSelife()
+
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_CALLBACK_CONSTANT) {
+
+            //check if all permissions are granted
+            var allgranted = false
+            for (i in grantResults.indices) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    allgranted = true
+
+                } else {
+
+                    allgranted = false
+                    break
+                }
+            }
+            if (allgranted) {
+                showToast(mContext, "Allowed All Permissions")
+                takeSelife()
+
+            } else if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    permissionsRequired[0]
+                )
+                || ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    permissionsRequired[1]
+                )
+                || ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    permissionsRequired[2]
+                )
+            ) {
+
+                //just request the permission
+                getAlertDialog()
+            } else {
+                showToast(mContext, "Unable to get Permission")
+            }
+        }
+    }
+
+    private fun getAlertDialog() {
+        val builder = AlertDialog.Builder(mContext)
+        builder.setTitle("Permissions Required")
+        builder.setMessage("Without permission you are unable to login. Go ahead and grant permission")
+        builder.setPositiveButton("Grant") { dialog, which ->
+            dialog.cancel()
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                permissionsRequired,
+                PERMISSION_CALLBACK_CONSTANT
+            )
+        }
+        builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+        builder.show()
+    }
+
+
     override fun onStart() {
         super.onStart()
 
         if (ActivityCompat.checkSelfPermission(
-                requireContext(),
+                mContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
+                mContext,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -426,7 +517,6 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest,
             locationCallback,

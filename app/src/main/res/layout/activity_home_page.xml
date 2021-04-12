@@ -14,6 +14,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/bg_color"
         app:title="Tulasi Distributers"
+        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:titleTextColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

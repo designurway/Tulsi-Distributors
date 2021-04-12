@@ -7,6 +7,7 @@ import com.tulsidistributors.tdemployee.model.attendance.AttendanceModel
 import com.tulsidistributors.tdemployee.model.completed_order.CompletedOderModel
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductModel
 import com.tulsidistributors.tdemployee.model.login.LoginModel
+import com.tulsidistributors.tdemployee.model.pending_payment_list.PendingPaymentListModel
 import com.tulsidistributors.tdemployee.model.place_order_model.PlaceOrderModel
 import com.tulsidistributors.tdemployee.model.placed_order_list.PlacedOrderListModel
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
@@ -144,7 +145,7 @@ interface TDApi {
     @POST("placeOrder")
     suspend fun placeOrder(
 
-        @Body order_item: PlaceOrderModel
+        @Body order_list: PlaceOrderModel
     ): Response<StatusMessageModel>
 
 
@@ -176,5 +177,38 @@ interface TDApi {
         @Field("product_id") product_id:String,
         @Field("quantity") quantity:String,
     ):Response<StatusMessageModel>
+
+    @FormUrlEncoded
+    @POST("addPaymentDetails")
+    suspend fun addPaymentDetails(
+        @Field("reference_id") reference_no:String,
+        @Field("dealer_id") dealer_id:String,
+        @Field("pending_amount") pending_amount:String,
+        @Field("advance_amount") advance_amount:String,
+        @Field("payment_mode") payment_mode:String,
+        @Field("remarks") remarks:String,
+        @Field("purchase_date") purchase_date:String,
+        @Field("total_amount") total_amount:String,
+    ):Response<StatusMessageModel>
+
+    @GET("getPendingPaymentList")
+    suspend fun getPendingPaymentList(
+        @Query("dealer_id") dealer_id:String
+    ):Response<PendingPaymentListModel>
+
+
+    @FormUrlEncoded
+    @POST("updatePendingPaymentDetails")
+    suspend fun updatePendingPaymentDetails(
+        @Field("reference_id") reference_id:String,
+        @Field("dealer_id") dealer_id:String,
+        @Field("total_amount") total_amount:String,
+        @Field("pending_amount") pending_amount:String,
+        @Field("advance_amount") advance_amount:String,
+        @Field("payment_mode") payment_mode:String,
+        @Field("remarks") remarks:String
+
+    ):Response<StatusMessageModel>
+
 }
 

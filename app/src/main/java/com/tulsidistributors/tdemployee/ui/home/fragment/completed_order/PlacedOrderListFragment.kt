@@ -11,11 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.tulsidistributors.tdemployee.databinding.FragmentPlacedOrderListBinding
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.placed_order_list.PlacedOrderListData
 import com.tulsidistributors.tdemployee.model.placed_order_list.PlacedOrderListModel
 import com.tulsidistributors.tdemployee.ui.adapter.PlaceOrderListAdapter
+import com.tulsidistributors.tdemployee.utils.noDataFound
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +35,7 @@ class PlacedOrderListFragment : Fragment() {
     lateinit var dealerId:String
     lateinit var date:String
     lateinit var mContext:Context
-
+    lateinit var shimmerLayout: ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +55,8 @@ class PlacedOrderListFragment : Fragment() {
         date = args.purchaseDate
 
         placeOrderListRecycler = binding.placeOrderListRecycler
+        shimmerLayout = binding.shimmerLayout
+        shimmerLayout.startShimmer()
 
         val layoutManager = LinearLayoutManager(requireContext())
         placeOrderListRecycler.layoutManager = layoutManager
@@ -73,6 +77,9 @@ class PlacedOrderListFragment : Fragment() {
 
                     val placedOrderAdapter = PlaceOrderListAdapter(placeOrderList)
                     placeOrderListRecycler.adapter = placedOrderAdapter
+                    shimmerLayout.stopShimmer()
+                    noDataFound(placeOrderListRecycler,shimmerLayout)
+                    showToast(mContext, "Sucess ${responseData.message}")
                 }else{
                     showToast(mContext, "Response Message ${response.message()}")
                 }

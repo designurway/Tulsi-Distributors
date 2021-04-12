@@ -11,6 +11,7 @@ import androidx.lifecycle.asLiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentCompletedOrderBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
@@ -19,6 +20,7 @@ import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.completed_order.CompletedOderModel
 import com.tulsidistributors.tdemployee.model.completed_order.CompletedOrderData
 import com.tulsidistributors.tdemployee.ui.adapter.CompletedOrderAdapter
+import com.tulsidistributors.tdemployee.utils.noDataFound
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +38,7 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
     lateinit var userLoginPreferences: UserLoginPreferences
     lateinit var EmpId:String
     lateinit var mContext:Context
+    lateinit var shimmerLayout:ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +59,9 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
 
         cOrderRecyclerView = binding.cOrderRecyclerView
 
+        shimmerLayout = binding.shimmerLayout
+        shimmerLayout.startShimmer()
+
         val layoutManager = LinearLayoutManager(requireContext())
         cOrderRecyclerView.layoutManager = layoutManager
 
@@ -68,6 +74,10 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
             try {
                 val response = getCompletedOrderApiCall(empId)
                 if (response.isSuccessful) {
+
+                    shimmerLayout.stopShimmer()
+                    noDataFound(cOrderRecyclerView,shimmerLayout)
+
                     val data = response.body()
 
                     val orderData: ArrayList<CompletedOrderData> = data!!.completed_order
@@ -75,6 +85,8 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
                         CompletedOrderAdapter(orderData, this@CompletedOrderFragment)
 
                     cOrderRecyclerView.adapter = compledtedAdapter
+
+
 
                 } else {
                     showToast(mContext, "Response Code : ${response.code()} and Respone Message : ${response.message()}")
@@ -96,10 +108,7 @@ class CompletedOrderFragment : Fragment(), CompletedOrderAdapter.OnCompletedOrde
 
     override fun OnOrderItemClicked(position: Int, dealerId: String, date: String) {
         val action =
-            CompletedOrderFragmentDirections.actionCompletedOrderFragmentToPlacedOrderListFragment(
-                dealerId = dealerId,
-                date
-            )
+            CompletedOrderFragmentDirections.actionCompletedOrderFragmentToPlacedOrderListFragment(dealerId = dealerId,purchaseDate = date)
 
         requireView().findNavController().navigate(action)
     }

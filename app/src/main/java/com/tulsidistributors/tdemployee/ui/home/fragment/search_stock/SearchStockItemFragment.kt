@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.tulsidistributors.tdemployee.databinding.FragmentSearchStockItemBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
 import com.tulsidistributors.tdemployee.datastore.dataStore
@@ -23,6 +24,7 @@ import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
 import com.tulsidistributors.tdemployee.ui.adapter.AddProductItemClickListner
 import com.tulsidistributors.tdemployee.ui.adapter.OnAddItemClickListner
 import com.tulsidistributors.tdemployee.ui.adapter.SearchStockItemAdapter
+import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
 import com.tulsidistributors.tdemployee.utils.noDataFound
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +45,8 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
     val args:SearchStockItemFragmentArgs by navArgs()
     lateinit var dealerId:String
     lateinit var saleExecutiveId:String
+    lateinit var from:String
+    lateinit var shimmerLayout: ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,15 +54,22 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentSearchStockItemBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as HomePageActivity).hideToolBar()
+
+
         mContext = requireContext()
         dealerId = args.dealerId
+        from = args.from
 
+        shimmerLayout = binding.shimmerLayout
+        shimmerLayout.startShimmer()
 
 //        brandName = args.brandName
 
@@ -93,9 +104,9 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     if (responseData?.status.equals("1")) {
-
+                        noDataFound(searchStockRecycler,shimmerLayout)
                         val searchItem: ArrayList<SearchStockItemData> = responseData!!.stock_list
-                        val adapter = SearchStockItemAdapter(searchItem,this@SearchStockItemFragment)
+                        val adapter = SearchStockItemAdapter(searchItem,this@SearchStockItemFragment,from = from)
                         searchStockRecycler.adapter = adapter
 
                     } else {
@@ -131,8 +142,10 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
                     val responseData = response.body()
                     if (responseData?.status.equals("1")) {
 
+                        shimmerLayout.stopShimmer()
+                        noDataFound(searchStockRecycler,shimmerLayout)
                         val searchItem: ArrayList<SearchStockItemData> = responseData!!.stock_list
-                        val adapter = SearchStockItemAdapter(searchItem,this@SearchStockItemFragment)
+                        val adapter = SearchStockItemAdapter(searchItem,this@SearchStockItemFragment,from = from)
                         searchStockRecycler.adapter = adapter
 
                     } else {
@@ -176,6 +189,9 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
         addItemBtn: Button,
         alreadyAddedBtn: Button
     ) {
+
+        showToast(mContext,"ProductId : $productId")
+
         addProductToDealer(saleExecutiveId,dealerId,productId,addItemBtn,alreadyAddedBtn)
     }
 
@@ -187,7 +203,7 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
 
                 if (response.isSuccessful){
                     val responseData = response.body()
-                    showToast(mContext, responseData!!.message)
+//                    showToast(mContext, responseData!!.message)
 
                     // hiding the view
                     noDataFound(alreadyAddedBtn,addItemBtn)
@@ -210,5 +226,17 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        showToast(mContext,"dddd")
+        (activity as HomePageActivity).hideToolBar()
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+
+        (activity as HomePageActivity).showToolbar()
+    }
 
 }

@@ -74,7 +74,7 @@
             <Button
                 android:id="@+id/addProductBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginBottom="10dp"
@@ -125,6 +125,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/edit_profile_bg"
                 android:padding="5dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/addProductBtn"
                 app:layout_constraintStart_toStartOf="@id/product_des"

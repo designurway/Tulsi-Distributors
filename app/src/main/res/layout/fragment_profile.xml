@@ -15,7 +15,7 @@
             android:id="@+id/profileImg"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/profile_img"
+            tools:src="@drawable/profile_img"
             android:layout_marginStart="30dp"
             app:civ_border_color="@color/black"
             app:civ_border_width="1dp"
@@ -27,7 +27,7 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Emma Clarke"
+            tools:text="Emma Clarke"
             android:fontFamily="@font/pt_sererif_regular"
             android:textSize="18sp"
             android:layout_marginStart="20dp"
@@ -41,7 +41,7 @@
             android:id="@+id/mobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+91666333222"
+            tools:text="+91666333222"
             android:fontFamily="@font/pt_sererif_regular"
             android:textSize="18sp"
             android:layout_marginTop="10dp"
@@ -50,16 +50,18 @@
             app:layout_constraintStart_toEndOf="@id/profileImg"
             app:layout_constraintTop_toBottomOf="@id/name"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/editProfileBtn"
-            android:layout_width="65dp"
-            android:layout_height="30dp"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
             android:text="Edit"
+            android:visibility="gone"
             android:textAllCaps="false"
             android:layout_marginTop="13dp"
             android:textColor="@color/white"
             android:background="@drawable/btn"            app:layout_constraintStart_toStartOf="@id/mobile"
             app:layout_constraintTop_toBottomOf="@+id/mobile"/>
+<!--
 
         <TextView
             android:id="@+id/accountTxt"
@@ -114,6 +116,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/passImg" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+-->
 
         <TextView
             android:id="@+id/supportTxt"
@@ -128,7 +131,7 @@
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/changPassLayout"/>
+            app:layout_constraintTop_toBottomOf="@id/profileImg"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/supportLayout"
@@ -197,7 +200,6 @@
             android:layout_marginEnd="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/moreTxt" >

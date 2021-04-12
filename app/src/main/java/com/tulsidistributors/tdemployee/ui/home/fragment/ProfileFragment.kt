@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +38,8 @@ class ProfileFragment : Fragment() {
     lateinit var mContext:Context
     lateinit var userLoginPreferences: UserLoginPreferences
     lateinit var empId:String
+    lateinit var phoneNum:String
+    lateinit var editProfileBtn:Button
 
 
     override fun onCreateView(
@@ -56,17 +59,18 @@ class ProfileFragment : Fragment() {
 
         mContext = requireContext()
 
-
+        editProfileBtn= binding.editProfileBtn
 
         binding.editProfileBtn.setOnClickListener {
-            action = ProfileFragmentDirections.actionProfileFragmentToUpdateProfileFragment(name = name,imageUrl = imageUrl)
+            action = ProfileFragmentDirections.actionProfileFragmentToUpdateProfileFragment(name = name,imageUrl = imageUrl,
+            phoneNumber = phoneNum)
             requireView().findNavController().navigate(action)
         }
 
-        binding.changPassLayout.setOnClickListener {
+     /*   binding.changPassLayout.setOnClickListener {
             action = ProfileFragmentDirections.actionProfileFragmentToChangePasswordFragment()
             requireView().findNavController().navigate(action)
-        }
+        }*/
 
 
         binding.supportLayout.setOnClickListener {
@@ -131,8 +135,12 @@ class ProfileFragment : Fragment() {
 
                         binding.name.text = name
                         binding.mobile.text = responseData.phone_number
-                         imageUrl = "http://192.168.4.166:8000/${responseData.profile}"
-//                        Glide.with(requireView()).load(imageUrl).into(binding.profileImg)
+                        imageUrl = responseData.profile
+                        phoneNum = responseData.phone_number
+                        editProfileBtn.visibility=View.VISIBLE
+                        Glide.with(requireView()).load(imageUrl).into(binding.profileImg)
+
+
                     }else{
                         showToast(mContext, "${responseData.message}")
                     }

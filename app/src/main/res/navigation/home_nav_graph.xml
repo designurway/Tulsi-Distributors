@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_assignedOrderFragment"
             app:destination="@id/assignedOrderFragment" />
@@ -22,12 +22,15 @@
         <action
             android:id="@+id/action_homeFragment_to_stockItemFragment"
             app:destination="@id/searchStockItemFragment2" />
+        <action
+            android:id="@+id/action_homeFragment_to_pendingPaymentFragment"
+            app:destination="@id/pendingPaymentFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profileFragment_to_termsConditionFragment"
             app:destination="@id/termsConditionFragment" />
@@ -51,23 +54,23 @@
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.NotificationFragment"
-        android:label="fragment_notification"
+        android:label="Notification"
         tools:layout="@layout/fragment_notification" />
 
     <fragment
         android:id="@+id/completedOrderFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.completed_order.CompletedOrderFragment"
-        android:label="fragment_completed_order"
-        tools:layout="@layout/fragment_completed_order" >
+        android:label="Order Completed"
+        tools:layout="@layout/fragment_completed_order">
         <action
             android:id="@+id/action_completedOrderFragment_to_placedOrderListFragment"
             app:destination="@id/placedOrderListFragment" />
     </fragment>
     <fragment
         android:id="@+id/assignedOrderFragment"
-        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AssignedOrderFragment"
-        android:label="fragment_assigned_order"
-        tools:layout="@layout/fragment_assigned_order" >
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.assigned_orders.AssignedOrderFragment"
+        android:label="Assigned Order"
+        tools:layout="@layout/fragment_assigned_order">
         <action
             android:id="@+id/action_assignedOrderFragment_to_addProductListFragment2"
             app:destination="@id/addProductListFragment2" />
@@ -75,23 +78,23 @@
     <fragment
         android:id="@+id/attendenceFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AttendenceFragment"
-        android:label="fragment_attendence"
+        android:label="Attendence"
         tools:layout="@layout/fragment_attendence" />
     <fragment
         android:id="@+id/aboutUsFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.AboutUsFragment"
-        android:label="fragment_about_us"
+        android:label="About Us"
         tools:layout="@layout/fragment_about_us" />
     <fragment
         android:id="@+id/privacyPolicyFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.PrivacyPolicyFragment"
-        android:label="fragment_privacy_policy"
+        android:label="Privacy Policy"
         tools:layout="@layout/fragment_privacy_policy" />
     <fragment
         android:id="@+id/supportFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.SupportFragment"
-        android:label="fragment_support"
-        tools:layout="@layout/fragment_support" >
+        android:label="Support"
+        tools:layout="@layout/fragment_support">
         <action
             android:id="@+id/action_supportFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -99,13 +102,13 @@
     <fragment
         android:id="@+id/termsConditionFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.TermsConditionFragment"
-        android:label="fragment_terms_condition"
+        android:label="Terms and Condition"
         tools:layout="@layout/fragment_terms_condition" />
     <fragment
         android:id="@+id/addProductListFragment2"
-        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.AddProductListFragment"
-        android:label="fragment_add_product_list"
-        tools:layout="@layout/fragment_add_product_list" >
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.assigned_orders.AddProductListFragment"
+        android:label="Products"
+        tools:layout="@layout/fragment_add_product_list">
         <argument
             android:name="dealer_id"
             app:argType="string" />
@@ -121,12 +124,15 @@
         <action
             android:id="@+id/action_addProductListFragment2_to_searchStockItemFragment2"
             app:destination="@id/searchStockItemFragment2" />
+        <action
+            android:id="@+id/action_addProductListFragment2_to_addPaymentFragmentFragment"
+            app:destination="@id/addPaymentFragmentFragment" />
     </fragment>
     <fragment
         android:id="@+id/updateProfileFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.setting.UpdateProfileFragment"
-        android:label="fragment_update_profile"
-        tools:layout="@layout/fragment_update_profile" >
+        android:label="Update Profile"
+        tools:layout="@layout/fragment_update_profile">
         <argument
             android:name="imageUrl"
             app:argType="string" />
@@ -136,6 +142,9 @@
         <action
             android:id="@+id/action_updateProfileFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <argument
+            android:name="phone_number"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/changeNewPassFragment"
@@ -173,23 +182,102 @@
     <fragment
         android:id="@+id/placedOrderListFragment"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.completed_order.PlacedOrderListFragment"
-        android:label="fragment_placed_order_list"
-        tools:layout="@layout/fragment_placed_order_list" >
-        <argument
-            android:name="dealerId"
-            app:argType="string" />
+        android:label="Order List"
+        tools:layout="@layout/fragment_placed_order_list">
+
         <argument
             android:name="purchaseDate"
+            app:argType="string" />
+        <argument
+            android:name="dealerId"
             app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/searchStockItemFragment2"
         android:name="com.tulsidistributors.tdemployee.ui.home.fragment.search_stock.SearchStockItemFragment"
-        android:label="fragment_search_stock_item"
-        tools:layout="@layout/fragment_search_stock_item" >
+        android:label="Stock Items"
+        tools:layout="@layout/fragment_search_stock_item">
+
 
         <argument
+            android:name="from"
+            app:argType="string" />
+        <argument
             android:name="dealerId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPaymentFragmentFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.assigned_orders.AddPaymentFragment"
+        android:label="Payment"
+        tools:layout="@layout/fragment_add_payment">
+        <argument
+            android:name="totalAmount"
+            app:argType="integer" />
+        <argument
+            android:name="refrenceNo"
+            app:argType="string" />
+        <argument
+            android:name="dealerId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_addPaymentFragmentFragment_to_orderPlacedSucessfullyFragment"
+            app:destination="@id/orderPlacedSucessfullyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderPlacedSucessfullyFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.assigned_orders.OrderPlacedSucessfullyFragment"
+        android:label="fragment_order_placed_sucessfully"
+        tools:layout="@layout/fragment_order_placed_sucessfully" >
+        <action
+            android:id="@+id/action_orderPlacedSucessfullyFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/pendingPaymentFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.pending_payment.PendingPaymentFragment"
+        android:label="Pending Payment"
+        tools:layout="@layout/fragment_pending_payment">
+        <action
+            android:id="@+id/action_pendingPaymentFragment_to_pendingPaymentListFragment"
+            app:destination="@id/pendingPaymentListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pendingPaymentListFragment"
+        android:name="com.tulsidistributors.tdemployee.ui.home.fragment.pending_payment.PendingPaymentListFragment"
+        android:label="Payment List"
+        tools:layout="@layout/fragment_pending_payment_list">
+        <argument
+            android:name="dealerId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_pendingPaymentListFragment_to_updatePendingAmountFragment"
+            app:destination="@id/updatePendingAmountFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updatePendingAmountFragment"
+        android:name="com.tulsidistributors.tdemployee.model.pending_payment_list.UpdatePendingAmountFragment"
+        android:label="Update Payment"
+        tools:layout="@layout/fragment_update_pending_amount">
+        <argument
+            android:name="dealer_id"
+            app:argType="string" />
+        <argument
+            android:name="pendingAmount"
+            app:argType="string" />
+        <argument
+            android:name="totalAmount"
+            app:argType="string" />
+        <argument
+            android:name="advanceAmount"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_updatePendingAmountFragment_to_orderPlacedSucessfullyFragment"
+            app:destination="@id/orderPlacedSucessfullyFragment" />
+        <argument
+            android:name="refrenceId"
             app:argType="string" />
     </fragment>
 </navigation>

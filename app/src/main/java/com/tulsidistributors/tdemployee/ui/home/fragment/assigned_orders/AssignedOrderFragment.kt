@@ -1,4 +1,4 @@
-package com.tulsidistributors.tdemployee.ui.home.fragment
+package com.tulsidistributors.tdemployee.ui.home.fragment.assigned_orders
 
 import android.Manifest
 import android.content.Context
@@ -6,19 +6,16 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
-import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.location.*
 import com.tulsidistributors.tdemployee.databinding.FragmentAssignedOrderBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
@@ -28,12 +25,11 @@ import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderData
 import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderModel
 import com.tulsidistributors.tdemployee.ui.adapter.AssignedOrderAdapter
 import com.tulsidistributors.tdemployee.ui.adapter.AssignedOrderClicked
-import com.tulsidistributors.tdemployee.utils.GetUserDetails
+import com.tulsidistributors.tdemployee.utils.noDataFound
 import com.tulsidistributors.tdemployee.utils.showLog
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -57,6 +53,7 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
     var EmaiId=""
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var mContext: Context
+    lateinit var shimmerLayout: ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +68,8 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
         super.onViewCreated(view, savedInstanceState)
 
         mContext = requireContext()
+        shimmerLayout = binding.shimmerLayout
+        shimmerLayout.startShimmer()
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
@@ -110,6 +109,9 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
                     val assignedOrder: ArrayList<AssignedOrderData> = data!!.assigned_order
                     assignAdapter = AssignedOrderAdapter(assignedOrder, this@AssignedOrderFragment)
                     assignedOrderRecyclerView.adapter = assignAdapter
+
+                    shimmerLayout.stopShimmer()
+                    noDataFound(assignedOrderRecyclerView,shimmerLayout)
 
                 } else {
 

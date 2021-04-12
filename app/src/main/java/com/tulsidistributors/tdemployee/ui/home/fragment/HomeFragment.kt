@@ -85,6 +85,14 @@ class HomeFragment : Fragment(), HomeItemClicked {
         )
 
 
+        list.add(
+            CategoryModel(
+                "Pending Payment",
+                ContextCompat.getDrawable(requireContext(), R.drawable.pending_payment )!!
+            )
+        )
+
+
         categoryAdapter = HomeAdapter(list, this)
         val gridLayoutManager = GridLayoutManager(activity, 2)
         categoryRv.setLayoutManager(gridLayoutManager)
@@ -111,13 +119,18 @@ class HomeFragment : Fragment(), HomeItemClicked {
             }
 
             "Stocks" -> {
-                action = HomeFragmentDirections.actionHomeFragmentToStockItemFragment("none")
+                action = HomeFragmentDirections.actionHomeFragmentToStockItemFragment(dealerId = "none",from = "home")
                 requireView().findNavController().navigate(action)
                 showToast(mContext,brandId)
             }
 
             "Attendance" -> {
                 action = HomeFragmentDirections.actionHomeFragmentToAttendenceFragment()
+                requireView().findNavController().navigate(action)
+            }
+
+            "Pending Payment" ->{
+                action = HomeFragmentDirections.actionHomeFragmentToPendingPaymentFragment()
                 requireView().findNavController().navigate(action)
             }
         }

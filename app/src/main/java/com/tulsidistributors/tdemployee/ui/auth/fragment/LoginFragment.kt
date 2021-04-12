@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
         forgotPass = binding.forgotPassTxt
         loginEmpId = binding.emailEt
         loginPassword = binding.passwordEt
-        loginSubmit = binding.signBtn!!
+        loginSubmit = binding.signBtn
 
         forgotPass.setOnClickListener {
             val action = LoginFragmentDirections.actionLoginFragmentToForgetPasswordFragment()

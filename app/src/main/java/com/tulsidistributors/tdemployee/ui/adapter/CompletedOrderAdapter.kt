@@ -14,7 +14,6 @@ class CompletedOrderAdapter(val orderList: ArrayList<CompletedOrderData>,val lis
         val shopName = binding.shopName
         val completedAddress = binding.completedAddress
         val completedDate = binding.completedDate
-        val completedTime = binding.completedTime
         val orderLayout = binding.orderLayout
     }
 

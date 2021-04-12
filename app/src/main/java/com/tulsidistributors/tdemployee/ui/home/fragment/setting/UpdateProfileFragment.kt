@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.databinding.FragmentUpdateProfileBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
 import com.tulsidistributors.tdemployee.datastore.dataStore
@@ -51,6 +52,7 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
     lateinit var mContext:Context
     lateinit var phone:String
 
+
     lateinit var userLoginPreferences: UserLoginPreferences
 
     private val args:UpdateProfileFragmentArgs by navArgs()
@@ -77,16 +79,17 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
-        getLoginDetails()
-
         profileImg = bindinig.profileImg
         updateNameEt = bindinig.updateNameEt
         updateImgBtn = bindinig.updateImgBtn
 
         name = args.name
         imageUrl = args.imageUrl
+        phone = args.phoneNumber
 
         updateNameEt.setText(name)
+
+        Glide.with(requireView()).load(imageUrl).into(bindinig.profileImg)
 
 
         profileImg.setOnClickListener {
@@ -107,6 +110,8 @@ class UpdateProfileFragment : Fragment(), UploadImageRequestBody.UploadCallback 
     private fun getLoginDetails() {
         userLoginPreferences.phoneFlow.asLiveData().observe(viewLifecycleOwner,{
             phone = it.toString()
+            showToast(mContext,"Phone Code ${phone}")
+
         })
     }
 

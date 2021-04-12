@@ -7,7 +7,7 @@ import kotlin.math.log
 class TimeDiffrence(val loginTime:String,val logoutTime:String) {
 
   fun getTimeDiffrence(): String {
-      val timeFormat = java.text.SimpleDateFormat("hh:mm:ss")
+      val timeFormat = java.text.SimpleDateFormat("HH:mm:ss")
 
       val logInTime = timeFormat.parse(loginTime)
       val logOutTime = timeFormat.parse(logoutTime)

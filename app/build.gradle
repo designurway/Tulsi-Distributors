@@ -91,4 +91,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-analytics'
 
+    //shimmer effect
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
 }

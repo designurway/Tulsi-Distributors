@@ -9,21 +9,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="15dp"
-        app:cardUseCompatPadding="true">
+        app:cardUseCompatPadding="true"
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/orderLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-<View
-    android:id="@+id/cView"
-    android:layout_width="8dp"
-    android:layout_height="0dp"
-    android:background="@color/colorPrimary"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"/>
+            <View
+                android:id="@+id/cView"
+                android:layout_width="8dp"
+                android:layout_height="0dp"
+                android:background="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/completedTxt"
@@ -32,8 +33,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="25dp"
-                android:backgroundTint="@color/colorPrimary"
                 android:background="@drawable/peinding_status"
+                android:backgroundTint="@color/colorPrimary"
                 android:paddingStart="10dp"
                 android:paddingTop="3dp"
                 android:paddingEnd="10dp"
@@ -63,36 +64,26 @@
                 android:id="@+id/completedAddress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="#191, Suswani Towers,3rd floor, B Block, 1st stage, C-Block, JP Nagar, Mysuru"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
-                app:layout_constraintStart_toEndOf="@id/cView"
+                android:layout_marginEnd="10dp"
+                android:text="#191, Suswani Towers,3rd floor, B Block, 1st stage, C-Block, JP Nagar, Mysuru"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cView"
                 app:layout_constraintTop_toBottomOf="@id/shopName" />
 
-            <TextView
-                android:id="@+id/completedTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="16m"
-                android:textColor="@color/black"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/completedAddress"
-                app:layout_constraintEnd_toEndOf="parent"/>
+
 
             <ImageView
                 android:id="@+id/calender"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/calendar"
-                app:layout_constraintStart_toEndOf="@id/cView"
-                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
+                android:src="@drawable/calendar"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/completedDate"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/completedAddress"
                 app:tint="@color/bg_color" />
@@ -101,14 +92,14 @@
                 android:id="@+id/completedDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="05-03-2020"
-                android:textColor="@color/black"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginBottom="10dp"
+                android:text="05-03-2020"
+                android:layout_marginEnd="10dp"
+                android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/completedAddress"
-                app:layout_constraintStart_toEndOf="@id/calender"/>
+app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/completedAddress" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

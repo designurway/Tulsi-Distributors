@@ -152,7 +152,7 @@ class AttendenceFragment : Fragment() {
 
                         }
 
-                        val timeDiff = TimeDiffrence("12:05:41", "17:43:41")
+                        val timeDiff = TimeDiffrence(loginTime, logoutTime)
 
                         val totalTime = timeDiff.getTimeDiffrence()
 

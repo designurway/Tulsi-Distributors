@@ -4,21 +4,18 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.ActivityHomePageBinding
@@ -43,7 +40,8 @@ class HomePageActivity : AppCompatActivity(), NavToolbarController {
         bottonNav = binding.bottomNav
 
         setSupportActionBar(homeToolbar)
-
+        val actionBar: ActionBar?
+        actionBar = supportActionBar
 
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
@@ -70,6 +68,11 @@ class HomePageActivity : AppCompatActivity(), NavToolbarController {
         if (title != null) {
            navController.navigate(R.id.notificationFragment)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+
     }
 
 

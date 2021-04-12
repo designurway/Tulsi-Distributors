@@ -1,9 +1,10 @@
-package com.tulsidistributors.tdemployee.ui.home.fragment
+package com.tulsidistributors.tdemployee.ui.home.fragment.assigned_orders
 
 import RecyclerViewSwipeCallback
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.designurway.tdapplication.adapter.SelectedProductAdapter
 import com.designurway.tdapplication.model.SelectedProductModel
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.*
@@ -36,10 +38,7 @@ import com.tulsidistributors.tdemployee.model.place_order_model.PlaceOrderModel
 import com.tulsidistributors.tdemployee.ui.adapter.AddProductAdapter
 import com.tulsidistributors.tdemployee.ui.adapter.AddProductItemClickListner
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
-import com.tulsidistributors.tdemployee.utils.Common
-import com.tulsidistributors.tdemployee.utils.dataFound
-import com.tulsidistributors.tdemployee.utils.noDataFound
-import com.tulsidistributors.tdemployee.utils.showToast
+import com.tulsidistributors.tdemployee.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,6 +78,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     lateinit var shopAddressTv: TextView
     lateinit var shopNameTv: TextView
     lateinit var addProductBtn: Button
+    lateinit var shimmerLayout: ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -118,6 +118,9 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
         refrenceId = "Refno${Common().generateRandomNumber()}"
 
+        shimmerLayout = binding.shimmerLayout
+        shimmerLayout.startShimmer()
+
 
         userLoginPrefrence = UserLoginPreferences(requireActivity().dataStore)
 
@@ -142,7 +145,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         addProductBtn.setOnClickListener {
             val action =
                 AddProductListFragmentDirections.actionAddProductListFragment2ToSearchStockItemFragment2(
-                    dealer_id
+                    dealer_id, "add_product_list"
                 )
             findNavController().navigate(action)
         }
@@ -182,9 +185,12 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         val confirmOrder = binding.confirmOrder
 
         quantity.text = "Qnty: ${list.size}"
+        var totalPrice = 0
 
         for (i in 0..list.size - 1) {
+
             totalPrice += list.get(i).proPrice.toInt()
+            Log.d("productprice", list.get(i).proPrice)
         }
 
         totalAmount.text = "Total: ${totalPrice}"
@@ -227,11 +233,12 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                         list.removeAt(position!!)
                         quantity.text = "Qnty" + list.size.toString()
                         totalPrice = 0
+
                         for (i in 0..list.size - 1) {
                             totalPrice += list.get(i).proPrice.toInt()
                         }
 
-                        totalAmount.text = "Total:" + totalPrice.toString()
+                        totalAmount.text = "Total :" + totalPrice.toString()
 
                     }
 
@@ -243,25 +250,20 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         itemTouchHelper.attachToRecyclerView(bottomSheetRecycler)
 
         confirmOrder.setOnClickListener {
-            showToast(mContext, "Refrence Id $refrenceId")
-            placeOrder()
+            placeOrder(totalPrice)
+            bottomSheetDialog?.dismiss()
         }
 
 
     }
 
-    private fun placeOrder() {
+    private fun placeOrder(totalPrice:Int) {
 
         val purchaseDate = Common().getCurrentDate("yyyy-MM-dd")
         val placeOrderModel = PlaceOrderModel(
-            refrenceId,
-            dealer_id,
-            sales_executive_id = saleExectiveId,
-            totalPrice.toString(),
-            "500",
-            purchaseDate,
-            "100",
-            placeOderList
+            routingId = routingId,
+            order_status = "completed",
+             placeOderList
         )
 
 
@@ -275,6 +277,10 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
                     val responseData = response.body()
                     showToast(mContext, "${responseData!!.message}")
+                    showLog("Amount","Total Amount $totalPrice")
+                    val action = AddProductListFragmentDirections.actionAddProductListFragment2ToAddPaymentFragmentFragment(totalAmount = totalPrice,refrenceNo = refrenceId,dealerId= dealer_id)
+                    findNavController().navigate(action)
+
 
                 } else {
                     showToast(mContext, "Response Message ${response.message()}")
@@ -305,9 +311,10 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
     private fun getDealerProductItem(dealerId: String, empId: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val response = getDealerProductItemApiCall(dealerId = dealerId, empId = empId)
+
 
             try {
+                val response = getDealerProductItemApiCall(dealerId = dealerId, empId = empId)
                 if (response.isSuccessful) {
                     val responseData = response.body()
 
@@ -319,10 +326,17 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                         val adapter = AddProductAdapter(productItem, this@AddProductListFragment)
                         productRecycler.adapter = adapter
 
-                        dataFound(mainLayout, sadIc)
+                        shimmerLayout.stopShimmer()
+                        noDataFound(binding.constLayout,shimmerLayout)
+                        binding.showBtn.visibility =View.VISIBLE
+                        binding.addProductBtn.visibility =View.VISIBLE
+
                     } else {
 
-                        noDataFound(sadIc, mainLayout)
+                        binding.showBtn.visibility =View.VISIBLE
+                        binding.addProductBtn.visibility =View.VISIBLE
+                        noDataFound(sadIc, shimmerLayout)
+                        shimmerLayout.stopShimmer()
 
                         showToast(mContext, "${responseData?.message}")
                     }
@@ -400,7 +414,8 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
     override fun onResume() {
         super.onResume()
-        (activity as HomePageActivity).hideToolBar()
+        showToast(mContext,"On Resume")
+        (requireActivity() as HomePageActivity).hideToolBar()
     }
 
 
@@ -443,83 +458,19 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         productId: String
     ) {
 
-        addBtn.text = "Already Added"
 
-        if (list.isNullOrEmpty()) {
-
-            list.add(
-                SelectedProductModel(
-                    prodactName,
-                    prodctQuantity.toString(),
-                    productPice,
-                    brandId,
-                    position,
-                    productPice.toInt()
-                )
-
-
-            )
-
-            placeOderList.add(
-                PlaceOrderData(
-                    saleExectiveId,
-                    productId,
-                    refrenceId,
-                    dealer_id,
-                    routingId,
-                    "59",
-                    totalQuantity.toString()
-                )
-            )
-
-        } else {
-
-            val names = list.map {
-                it.bandId
-            }
-
-
-            if (!names.contains(brandId)) {
-                list.add(
-                    SelectedProductModel(
-                        prodactName,
-                        prodctQuantity.toString(),
-                        productPice,
-                        brandId,
-                        position,
-                        productPice.toInt()
-                    )
-                )
-
-                placeOderList.add(
-                    PlaceOrderData(
-                        saleExectiveId,
-                        productId,
-                        refrenceId,
-                        dealer_id,
-                        routingId,
-                        "59",
-                        totalQuantity.toString()
-                    )
-                )
-
-            } else {
-                showToast(mContext, "Already added")
-
-            }
-
-        }
+        showDialogAddButton(addBtn, productId, prodactName, brandId, position)
     }
 
     override fun openDialogBox(oldQnty: TextView, position: Int, product_id: String) {
         oldQntyTv = oldQnty
-        showDialog("Qnt",product_id)
+        showDialog("Qnt", product_id)
 
 
     }
 
 
-    private fun showDialog(title: String,product_id:String) {
+    private fun showDialog(title: String, product_id: String) {
         /* val binding:AddQtyDialogBinding = AddQtyDialogBinding
              .inflate(LayoutInflater.from(getContext()))*/
 
@@ -540,7 +491,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                 saleExtId = saleExectiveId,
                 dealerId = dealer_id,
                 productId = product_id,
-                quantity =  body.text.toString()
+                quantity = body.text.toString()
             )
         }
         noBtn.setOnClickListener {
@@ -551,14 +502,13 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
     }
 
 
-
     private fun updateStock(
         saleExtId: String,
         dealerId: String,
         productId: String,
         quantity: String
     ) {
-        showToast(mContext,"Quantity $quantity")
+        showToast(mContext, "Quantity $quantity")
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = updateStockApiCall(saleExtId, dealerId, productId, quantity)
@@ -599,7 +549,16 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         var qtyTxt = binding.quantityTv
         var totalTxt = binding.totalTv
 
+        totalPrice = 0
 
+        for (i in 0..list.size - 1) {
+
+            totalPrice += list.get(i).proPrice.toInt()
+            totalQuantity += list.get(i).proQnty.toInt()
+
+        }
+        totalTxt.text = "Total: " + totalPrice.toString()
+        qtyTxt.text = "Qty: " + totalQuantity.toString()
         val dialog = Dialog(requireContext())
 
         val dialogBinding = CustomLayoutBinding.inflate(LayoutInflater.from(requireContext()))
@@ -612,6 +571,8 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
         val yesBtn = dialog.findViewById(R.id.btn_yes) as Button
         val noBtn = dialog.findViewById(R.id.btn_No) as Button
+
+
 
         yesBtn.setOnClickListener {
             dialog.dismiss()
@@ -636,8 +597,8 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                 totalQuantity += list.get(i).proQnty.toInt()
 
             }
-            totalTxt.text = "Total:" + totalPrice.toString()
-            qtyTxt.text = "Qty:" + totalQuantity.toString()
+            totalTxt.text = "Total: " + totalPrice.toString()
+            qtyTxt.text = "Qty: " + totalQuantity.toString()
 
         }
         noBtn.setOnClickListener {
@@ -659,6 +620,121 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
             getDealerProductItem(dealer_id, it.toString())
         }
+    }
+
+    private fun showDialogAddButton(
+        addBtn: Button, product_id: String,
+        prodactName: String, brandId: String, position: Int
+    ) {
+        /* val binding:AddQtyDialogBinding = AddQtyDialogBinding
+             .inflate(LayoutInflater.from(getContext()))*/
+
+
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.add_order_dialog)
+        val qnty = dialog.findViewById(R.id.tvQnty) as EditText
+        val price = dialog.findViewById(R.id.tvPrice) as EditText
+        val tax = dialog.findViewById(R.id.tvTax) as EditText
+
+        val yesBtn = dialog.findViewById(R.id.btn_yes) as Button
+        val noBtn = dialog.findViewById(R.id.btn_No) as Button
+
+        yesBtn.setOnClickListener {
+            addBtn.text = "Added"
+            dialog.dismiss()
+            var prodctQuantity = qnty.text.toString()
+//            var taxAmt = ((price.text.toString().toInt() * prodctQuantity.toInt() ) + (tax.text.toString().toInt() / 100))
+
+            var  taxamount =  price.text.toString().toInt() * prodctQuantity.toInt()
+
+            var priceAfteTax= taxamount + taxamount *tax.text.toString().toInt() / 100
+
+
+
+
+//            val total: Float = subTotal + subTotal * eTax / 100
+            var productPice = price.text.toString()
+
+            if (list.isNullOrEmpty()) {
+//
+                list.add(
+                    SelectedProductModel(
+                        prodactName,
+                        prodctQuantity,
+                        priceAfteTax.toString(),
+                        brandId,
+                        position,
+                        productPice.toInt()
+                    )
+
+
+                )
+
+                placeOderList.add(
+                    PlaceOrderData(
+                        routing_id = routingId,
+                        sales_executive_id = saleExectiveId,
+                        product_id = product_id,
+                        ref_no = refrenceId,
+                        dealer_id = dealer_id,
+                        order_quantity = prodctQuantity,
+                        item_price = productPice,
+                        tax = tax.text.toString(),
+                        price_after_tax = priceAfteTax.toString()
+                    )
+
+
+                )
+
+            } else {
+
+                val names = list.map {
+                    it.bandId
+                }
+
+
+                if (!names.contains(product_id)) {
+                    list.add(
+                        SelectedProductModel(
+                            prodactName,
+                            prodctQuantity,
+                            priceAfteTax.toString(),
+                            brandId,
+                            position,
+                            productPice.toInt()
+                        )
+                    )
+
+                    placeOderList.add(
+                        PlaceOrderData(
+                            routing_id = routingId,
+                            sales_executive_id = saleExectiveId,
+                            product_id = product_id,
+                            ref_no = refrenceId,
+                            dealer_id = dealer_id,
+                            order_quantity = prodctQuantity,
+                            item_price = productPice,
+                            tax = tax.text.toString(),
+                            price_after_tax = priceAfteTax.toString()
+                        )
+
+
+                    )
+                } else {
+                    showToast(mContext, "Already added")
+
+                }
+
+            }
+
+        }
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+
     }
 
 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/pendingListLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
+            <TextView
+                android:id="@+id/refrenceIdTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="Refrence No : "
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/refrenceId"
+                app:layout_constraintBottom_toBottomOf="@id/refrenceId"/>
+            <TextView
+                android:id="@+id/refrenceId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"
+                android:text="Ref12584"
+                app:layout_constraintStart_toEndOf="@id/refrenceIdTxt"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/pendingAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="Rs 500.00"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/purchaseDateTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grey"
+                android:textSize="14sp"
+                android:text="Purchase Date : "
+                app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="@id/purchaseDate"
+                app:layout_constraintBottom_toBottomOf="@id/purchaseDate"/>
+
+            <TextView
+                android:id="@+id/purchaseDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginStart="5dp"
+                android:text="2021-04-08"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toEndOf="@id/purchaseDateTxt"
+                app:layout_constraintTop_toBottomOf="@id/pendingAmount"/>
+
+
+            <TextView
+                android:id="@+id/pendingTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/orange"
+                android:textSize="16sp"
+                android:text="Pending"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pendingAmount"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
