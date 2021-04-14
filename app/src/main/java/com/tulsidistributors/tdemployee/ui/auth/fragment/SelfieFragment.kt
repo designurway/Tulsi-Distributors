@@ -1,6 +1,8 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -30,6 +32,7 @@ import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
 import com.tulsidistributors.tdemployee.utils.*
+import com.tulsidistributors.tdemployee.work_manager.AlarmReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -223,6 +226,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                     ).show()
 
                     userLoginPreferences.saveIsLoggedIn(true)
+                    AutoLogout(mContext).cancelAlarm()
 
                     val intent = Intent(requireContext(), HomePageActivity::class.java)
                     startActivity(intent)
@@ -318,7 +322,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         if (requestCode == REQUEST_CODE) {
             binding.selfieImage.setImageURI(uri)
         } else {
-            showToast(mContext,"Failed")
+            showToast(mContext, "Failed")
         }
     }
 
@@ -523,6 +527,9 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
             Looper.getMainLooper()
         )
     }
+
+
+
 
 
 }

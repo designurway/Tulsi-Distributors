@@ -3,8 +3,10 @@ package com.tulsidistributors.tdemployee.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.ui.home.fragment.models.NotificationModel
 
@@ -15,6 +17,7 @@ class NotificationAdapter(val notificationList:ArrayList<NotificationModel>): Re
         var title:TextView = itemView.findViewById(R.id.title_tv)
         var message:TextView=itemView.findViewById(R.id.description_tv)
         var date:TextView=itemView.findViewById(R.id.date_tv)
+        var notificationImg:ImageView=itemView.findViewById(R.id.notificationImg)
 
 
 
@@ -30,6 +33,8 @@ class NotificationAdapter(val notificationList:ArrayList<NotificationModel>): Re
         holder.title.text=notificationList.get(position).title
         holder.message.text=notificationList.get(position).body
         holder.date.text=notificationList.get(position).createdDate
+
+        Glide.with(holder.message).load(notificationList[position].profile).into(holder.notificationImg)
 
 
     }

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.databinding.SearchStockItemBinding
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemData
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
@@ -20,6 +21,7 @@ class SearchStockItemAdapter(val stockItem:ArrayList<SearchStockItemData>,val li
         val alreadyAddedBtn = binding.alreadyAdded
         val stockAvail = binding.stockAvail
         val addBtnLayout = binding.addBtnLayout
+        val searchStockImg = binding.searchStockImg
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchStock_VH {
@@ -32,6 +34,8 @@ class SearchStockItemAdapter(val stockItem:ArrayList<SearchStockItemData>,val li
         holder.stockProductDes.text = stockItem.get(position).description
         holder.stockQty.text = "Qty : ${stockItem.get(position).quantity}"
         holder.stockAvail.text = stockItem.get(position).product_status
+
+        Glide.with(holder.stockAvail).load(stockItem[position].product_image).into(holder.searchStockImg)
 
         if (from.equals("add_product_list")){
             holder.addBtnLayout.visibility = View.VISIBLE

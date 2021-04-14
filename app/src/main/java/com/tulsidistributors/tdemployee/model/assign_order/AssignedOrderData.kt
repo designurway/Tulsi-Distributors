@@ -4,6 +4,7 @@ data class AssignedOrderData(
     val dealer_id:String,
     val name:String,
     val shop_name:String,
+    val profile:String,
     val address:String,
     val latitude:String,
     val longitude:String,

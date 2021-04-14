@@ -3,6 +3,7 @@ package com.tulsidistributors.tdemployee.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.databinding.AssigneOrderItemListBinding
 import com.tulsidistributors.tdemployee.model.assign_order.AssignedOrderData
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +33,7 @@ class AssignedOrderAdapter(
         holder.shopName.text = orderList.get(position).shop_name
         holder.shopAddress.text = orderList.get(position).address
         holder.assignedOrderTime.text = orderList.get(position).date
+        Glide.with(holder.shopName).load(orderList[position].profile).into(holder.shopImg)
 
         holder.pendingOrderClicked.setOnClickListener {
             val dealer_id = orderList.get(position).dealer_id

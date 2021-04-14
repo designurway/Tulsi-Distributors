@@ -21,6 +21,7 @@ import com.tulsidistributors.tdemployee.datastore.dataStore
 import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.user_detail.UserDetailModel
 import com.tulsidistributors.tdemployee.ui.auth.AuthActivity
+import com.tulsidistributors.tdemployee.utils.AutoLogout
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -101,10 +102,13 @@ class ProfileFragment : Fragment() {
             val userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
             viewLifecycleOwner.lifecycleScope.launch {
+                AutoLogout(mContext).cancelAlarm()
+
                 val abc = userLoginPreferences.saveIsLoggedIn(false)
                 val intent = Intent(requireActivity(), AuthActivity::class.java)
                 requireContext().startActivity(intent)
                 requireActivity().finish()
+
 
             }
         }

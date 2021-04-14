@@ -21,7 +21,7 @@
 
 
             <ImageView
-                android:id="@+id/image_view_imv"
+                android:id="@+id/placeOrderImg"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/washing_machine_image"
@@ -39,8 +39,8 @@
                 android:textColor="@color/black"
                 android:textSize="15dp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/image_view_imv"
-                app:layout_constraintTop_toTopOf="@+id/image_view_imv">
+                app:layout_constraintStart_toEndOf="@+id/placeOrderImg"
+                app:layout_constraintTop_toTopOf="@+id/placeOrderImg">
 
             </TextView>
 
@@ -55,7 +55,7 @@
                 android:textColor="@color/black"
                 android:textSize="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/image_view_imv"
+                app:layout_constraintStart_toEndOf="@+id/placeOrderImg"
                 app:layout_constraintTop_toBottomOf="@+id/title_tv">
 
             </TextView>

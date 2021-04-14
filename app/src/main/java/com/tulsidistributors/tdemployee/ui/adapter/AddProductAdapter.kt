@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.databinding.AddProductItemsBinding
 import com.tulsidistributors.tdemployee.databinding.FragmentAddProductListBinding
 import com.tulsidistributors.tdemployee.model.get_admin_product.DealerProductData
@@ -30,6 +31,7 @@ class AddProductAdapter(
         val productQtyTxt = binding.productQtyTv
         val constriantQuantity = binding.constriantQuantity
         val oldQnty = binding.oldQnty
+        val productImg = binding.productImg
 
     }
 
@@ -53,6 +55,8 @@ class AddProductAdapter(
         holder.productPrice.text = "Rs ${productPrice}"
 
         var productQty = holder.productQtyTxt.text.toString().toInt()
+
+        Glide.with(holder.brandName).load(productItem[position].product_image).into(holder.productImg)
 
 
 
