@@ -109,13 +109,13 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         show_btn = binding.showBtn
         sadIc = binding.sadIc
         mainLayout = binding.mainLayout
-        shopAddressTv = binding.shopAddressTv
-        shopNameTv = binding.shopNameTv
+       /* shopAddressTv = binding.shopAddressTv
+        shopNameTv = binding.shopNameTv*/
         addProductBtn = binding.addProductBtn
 
-        binding.shopAddressTv.text = shop_address
+  /*      binding.shopAddressTv.text = shop_address
         binding.shopNameTv.text = shopName
-
+*/
         refrenceId = "Refno${Common().generateRandomNumber()}"
 
         shimmerLayout = binding.shimmerLayout
@@ -144,8 +144,8 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
 
         addProductBtn.setOnClickListener {
             val action =
-                AddProductListFragmentDirections.actionAddProductListFragment2ToSearchStockItemFragment2(
-                    dealer_id, "add_product_list"
+                AddProductListFragmentDirections.actionAddProductListFragment2ToSearchStockItemFragment2(from = "add_product_list",
+                    dealerId = dealer_id
                 )
             findNavController().navigate(action)
         }
@@ -453,7 +453,6 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
         position: Int,
         prodactName: String,
         prodctQuantity: Int,
-        productPice: String,
         brandId: String,
         productId: String
     ) {
@@ -680,6 +679,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                         ref_no = refrenceId,
                         dealer_id = dealer_id,
                         order_quantity = prodctQuantity,
+                        pending_order = prodctQuantity,
                         item_price = productPice,
                         tax = tax.text.toString(),
                         price_after_tax = priceAfteTax.toString()
@@ -715,6 +715,7 @@ class AddProductListFragment : Fragment(), AddProductItemClickListner {
                             ref_no = refrenceId,
                             dealer_id = dealer_id,
                             order_quantity = prodctQuantity,
+                            pending_order = prodctQuantity,
                             item_price = productPice,
                             tax = tax.text.toString(),
                             price_after_tax = priceAfteTax.toString()

@@ -26,6 +26,7 @@ import com.tulsidistributors.tdemployee.ui.adapter.OnAddItemClickListner
 import com.tulsidistributors.tdemployee.ui.adapter.SearchStockItemAdapter
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
 import com.tulsidistributors.tdemployee.utils.noDataFound
+import com.tulsidistributors.tdemployee.utils.showLog
 import com.tulsidistributors.tdemployee.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,6 +69,8 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
         dealerId = args.dealerId
         from = args.from
 
+        showLog("from","From => $from")
+
         shimmerLayout = binding.shimmerLayout
         shimmerLayout.startShimmer()
 
@@ -95,7 +98,7 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
 
 
     private fun getStockItem(brandId:String) {
-        showToast(mContext, "$brandId")
+//        showToast(mContext, "$brandId")
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -228,7 +231,7 @@ class SearchStockItemFragment : Fragment(),OnAddItemClickListner {
 
     override fun onResume() {
         super.onResume()
-        showToast(mContext,"dddd")
+
         (activity as HomePageActivity).hideToolBar()
     }
 

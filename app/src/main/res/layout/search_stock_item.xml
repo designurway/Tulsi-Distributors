@@ -20,28 +20,28 @@
             android:layout_height="match_parent"
             android:padding="10dp">
 
+            <TextView
+                android:id="@+id/staockProductName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Onida"
+                android:layout_marginEnd="25dp"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/stockAvail"
+                app:layout_constraintStart_toStartOf="@id/stockProductDes"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/searchStockImg"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/user"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/staockProductName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text="Onida"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/item_Iv"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginTop="7dp"
+                app:layout_constraintTop_toTopOf="@id/staockProductName"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/stockAvail"
@@ -91,7 +91,7 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/addItem"
                     android:layout_width="60dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/btn_bg"
                     android:text="Add"
                     app:layout_constraintBottom_toBottomOf="parent"

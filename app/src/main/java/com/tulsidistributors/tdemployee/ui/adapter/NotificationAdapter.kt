@@ -32,7 +32,7 @@ class NotificationAdapter(val notificationList:ArrayList<NotificationModel>): Re
 
         holder.title.text=notificationList.get(position).title
         holder.message.text=notificationList.get(position).body
-        holder.date.text=notificationList.get(position).createdDate
+        holder.date.text=notificationList.get(position).created_date
 
         Glide.with(holder.message).load(notificationList[position].profile).into(holder.notificationImg)
 

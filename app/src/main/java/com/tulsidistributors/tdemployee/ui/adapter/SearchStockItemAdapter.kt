@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.tulsidistributors.tdemployee.databinding.SearchStockItemBinding
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemData
 import com.tulsidistributors.tdemployee.model.search_stock.SearchStockItemModel
+import com.tulsidistributors.tdemployee.utils.showToast
 import java.util.zip.Inflater
 
 class SearchStockItemAdapter(val stockItem:ArrayList<SearchStockItemData>,val listner: OnAddItemClickListner,val from:String):RecyclerView.Adapter<SearchStockItemAdapter.SearchStock_VH>() {
@@ -36,6 +37,8 @@ class SearchStockItemAdapter(val stockItem:ArrayList<SearchStockItemData>,val li
         holder.stockAvail.text = stockItem.get(position).product_status
 
         Glide.with(holder.stockAvail).load(stockItem[position].product_image).into(holder.searchStockImg)
+
+//        showToast(holder.addBtnLayout.context,"From => $from")
 
         if (from.equals("add_product_list")){
             holder.addBtnLayout.visibility = View.VISIBLE

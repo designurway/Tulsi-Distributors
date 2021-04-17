@@ -73,7 +73,7 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
-        getUserDetails()
+
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
@@ -86,6 +86,8 @@ class AssignedOrderFragment : Fragment(), AssignedOrderClicked {
 
 
         getCurrentLocation()
+
+        getUserDetails()
 
 
         assignedOrderRecyclerView = binding.assignedOrderRecyclerView

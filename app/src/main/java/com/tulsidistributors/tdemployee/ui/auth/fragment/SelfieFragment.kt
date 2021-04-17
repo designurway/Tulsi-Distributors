@@ -1,8 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.auth.fragment
 
 import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,7 +30,6 @@ import com.tulsidistributors.tdemployee.json.BaseClient
 import com.tulsidistributors.tdemployee.model.StatusMessageModel
 import com.tulsidistributors.tdemployee.ui.home.HomePageActivity
 import com.tulsidistributors.tdemployee.utils.*
-import com.tulsidistributors.tdemployee.work_manager.AlarmReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,7 +76,6 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     private val PERMISSION_CALLBACK_CONSTANT = 100
 
 
-
     companion object {
         private const val CAMERA_PREMISSION_CODE = 1
         private const val CAMERA_REQUEST_CODE = 2
@@ -97,6 +93,8 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         mContext = requireContext()
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
@@ -107,7 +105,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
         currentDate = Common().getCurrentDate("yyyy-MM-dd")
 
-        showToast(mContext, "Current Date : $currentDate")
+//        showToast(mContext, "Current Date : $currentDate")
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
@@ -128,8 +126,6 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
         }
 
         binding.nextBtn.setOnClickListener {
-            /* val intent = Intent(requireContext(), HomePageActivity::class.java)
-             startActivity(intent)*/
 
             if (uri != null && !uri!!.equals(Uri.EMPTY)) {
                 generateToken()
@@ -226,7 +222,7 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                     ).show()
 
                     userLoginPreferences.saveIsLoggedIn(true)
-                    AutoLogout(mContext).cancelAlarm()
+                    AutoLogout(mContext).setAlarm()
 
                     val intent = Intent(requireContext(), HomePageActivity::class.java)
                     startActivity(intent)
@@ -349,22 +345,24 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
 
         userLoginPreferences.isLoggedIn.asLiveData().observe(viewLifecycleOwner, {
             if (it == true) {
-                val
-                        intent = Intent(requireContext(), HomePageActivity::class.java)
+
+                val intent = Intent(requireContext(), HomePageActivity::class.java)
                 startActivity(intent)
+                requireActivity().finish()
+
             }
         })
 
         userLoginPreferences.empIdFlow.asLiveData().observe(viewLifecycleOwner) {
             empId = it.toString()
-            Toast.makeText(requireContext(), "EmpId : $empId", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "EmpId : $empId", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun getLocation() {
         msettingsClient = LocationServices.getSettingsClient(requireContext())
 
-        Toast.makeText(requireContext(), "Inside method ", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(), "Inside method ", Toast.LENGTH_SHORT).show()
 
 
         locationCallback = object : LocationCallback() {
@@ -373,7 +371,6 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
                 for (location in locationResult.locations) {
                     // Update UI with location data
                     // ...
-
                     latitude = location.latitude
                     longtitude = location.longitude
 
@@ -527,10 +524,6 @@ class SelfieFragment : Fragment(), UploadImageRequestBody.UploadCallback {
             Looper.getMainLooper()
         )
     }
-
-
-
-
 
 }
 

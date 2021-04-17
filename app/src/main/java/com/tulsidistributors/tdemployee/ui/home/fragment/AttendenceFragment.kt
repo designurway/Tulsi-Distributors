@@ -117,6 +117,7 @@ class AttendenceFragment : Fragment() {
         }
 
 
+
     }
 
 
@@ -141,8 +142,8 @@ class AttendenceFragment : Fragment() {
                         binding.attendEmail.text = resposeData?.data?.emp_id
                         binding.loginTime.text = loginTime
                         binding.logoutTime.text = logoutTime
-
-                        Glide.with(requireView()).load(resposeData?.data?.profile)
+                        val imageUrl = "https://idlydose.in/Gugliya/TulsiDistributorApi/storage/app/${resposeData?.data?.profile}"
+                        Glide.with(requireView()).load(imageUrl)
                             .into(binding.atteImg)
 
                         if (!logoutTime.equals("0000-00-00 00:00:00") || !logoutTime.equals("00:00:00")) {
@@ -206,6 +207,7 @@ class AttendenceFragment : Fragment() {
             showToast(mContext, "Today Date : ${Common().getCurrentDate("yyyy-MM-dd")}")
 
         })
+
 
 
     }

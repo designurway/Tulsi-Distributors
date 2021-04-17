@@ -25,7 +25,13 @@ class TermsConditionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.termsWebView.loadUrl("https://stackoverflow.com/questions/8614553/can-someone-give-one-exact-example-of-webview-implementation-in-android")
+        binding.termsWebView.apply {
+            reload()
+            loadUrl("https://idlydose.in/Gugliya/TulsiDistributorApi/terms_conditions.html")
+            clearCache(true)
+
+        }
+
     }
 
 }

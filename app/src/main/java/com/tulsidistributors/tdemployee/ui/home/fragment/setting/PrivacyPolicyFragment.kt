@@ -28,7 +28,7 @@ class PrivacyPolicyFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        binding.privacyWebView.loadUrl("")
+        binding.privacyWebView.loadUrl("https://idlydose.in/Gugliya/TulsiDistributorApi/privacy_policy.html")
     }
 
 }

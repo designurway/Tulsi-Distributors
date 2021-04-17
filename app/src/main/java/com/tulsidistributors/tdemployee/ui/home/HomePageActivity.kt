@@ -20,7 +20,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.ActivityHomePageBinding
 import com.tulsidistributors.tdemployee.utils.NavToolbarController
-import com.tulsidistributors.tdemployee.work_manager.AlarmReceiver
+import com.tulsidistributors.tdemployee.alaram_manager.AlarmReceiver
+import com.tulsidistributors.tdemployee.utils.showToast
 import java.util.*
 
 class HomePageActivity : AppCompatActivity(), NavToolbarController {
@@ -42,6 +43,8 @@ class HomePageActivity : AppCompatActivity(), NavToolbarController {
         setSupportActionBar(homeToolbar)
         val actionBar: ActionBar?
         actionBar = supportActionBar
+
+        showToast(this,"Activity Called")
 
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)

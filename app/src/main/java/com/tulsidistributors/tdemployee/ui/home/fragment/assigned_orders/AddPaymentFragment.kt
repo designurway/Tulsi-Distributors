@@ -1,5 +1,6 @@
 package com.tulsidistributors.tdemployee.ui.home.fragment.assigned_orders
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -24,6 +25,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import java.time.temporal.TemporalAmount
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AddPaymentFragment : Fragment() {
@@ -34,10 +37,12 @@ class AddPaymentFragment : Fragment() {
      var totalAmount: Int = 0
     lateinit var paymentMode:String
     lateinit var referenceNo:String
+    lateinit var selectedDate: String
     lateinit var dealerId:String
     lateinit var pendingAmount: String
     lateinit var advanceAmount:String
     lateinit var remark:String
+    lateinit var datePickerDialog: DatePickerDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,6 +87,45 @@ class AddPaymentFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
+
+        binding.selectDueDate.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar[Calendar.YEAR]
+            val month = calendar[Calendar.MONTH]
+            val day = calendar[Calendar.DAY_OF_MONTH]
+
+
+
+
+            datePickerDialog = DatePickerDialog(
+                requireContext(),
+                DatePickerDialog.OnDateSetListener { view, Year, Month, dayOfMonth ->
+
+                    //Date format
+                    if (Month < 10 && dayOfMonth < 10) {
+                        selectedDate = "$Year-0${(Month + 1)}-0$dayOfMonth"
+                    } else if (Month > 10 && dayOfMonth < 10) {
+                        selectedDate = "$Year-${(Month + 1)}-0$dayOfMonth"
+                    } else if (Month < 10 && dayOfMonth > 10) {
+                        selectedDate = "$Year-0${(Month + 1)}-$dayOfMonth"
+                    } else {
+                        selectedDate = "$Year-${(Month + 1)}-$dayOfMonth"
+                    }
+
+
+                    binding.selectDueDate.text = dayOfMonth.toString() + "/" + (Month + 1) + "/" + Year
+
+
+
+                    showToast(mContext, "selected date $selectedDate")
+
+                }, year, month, day
+            )
+            datePickerDialog.show()
+
+
+        }
+
         binding.submitPaymentBtn.setOnClickListener {
 
             advanceAmount = binding.advanceAmount.text.toString().trim()
@@ -119,7 +163,8 @@ class AddPaymentFragment : Fragment() {
                 paymentMode,
                 remarks = remark,
                 Common().getCurrentDate("yyyy-MM-dd"),
-                total_amount = totalAmount.toString()
+                total_amount = totalAmount.toString(),
+                due_date = selectedDate
             )
         }
     }

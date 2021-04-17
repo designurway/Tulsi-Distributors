@@ -75,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addProdSearch"
         app:layout_constraintBottom_toBottomOf="parent">
-        <TextView
+      <!--  <TextView
             android:id="@+id/shop_name_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -103,17 +103,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shop_name_tv" />
-
+-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_rv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shop_address_tv"
+            app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/add_product_items" />
 
 

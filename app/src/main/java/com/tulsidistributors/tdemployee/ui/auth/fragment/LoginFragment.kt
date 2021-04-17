@@ -12,8 +12,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.tulsidistributors.tdemployee.R
 import com.tulsidistributors.tdemployee.databinding.FragmentLoginBinding
 import com.tulsidistributors.tdemployee.datastore.UserLoginPreferences
 import com.tulsidistributors.tdemployee.datastore.dataStore
@@ -51,6 +53,8 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mContext = requireContext()
+
+//        showToast(mContext,"Login Page")
 
         loginPrefrence = UserLoginPreferences(requireActivity().dataStore)
 
@@ -95,7 +99,7 @@ class LoginFragment : Fragment() {
 
                             //Saveing LoginDetail In DataStore
                             val emp_id = data!!.data.emp_id
-                            val sale_executive_id = data!!.data.sales_executive_id
+                            val sale_executive_id = data.data.sales_executive_id
                             val distributor_id = data.data.distributor_id
                             val email = data.data.email
                             val phone_number = data.data.phone_number
@@ -115,15 +119,16 @@ class LoginFragment : Fragment() {
                                 brand_id = brand_id,
                                 loggedInFirstTime = true
                             )
-                            showToast(mContext, data?.message)
+                            showToast(mContext, data!!.message)
                             val action =
                                 LoginFragmentDirections.actionLoginFragmentToSelfieFragment()
                             view.findNavController().navigate(action)
 
+                            requireView().findNavController().popBackStack(R.id.selfieFragment,true)
+
 
                         } else {
-                            showToast(mContext, data!!.message)
-
+                            showToast(mContext, " ${data!!.message}")
                         }
 
                     } else {
@@ -147,10 +152,10 @@ class LoginFragment : Fragment() {
 
     private fun getLoginDetails() {
         loginPrefrence.loggedInFirstTime.asLiveData().observe(viewLifecycleOwner, { loggedInFirstTime ->
-
             if (loggedInFirstTime==true){
               val action = LoginFragmentDirections.actionLoginFragmentToSelfieFragment()
                 findNavController().navigate(action)
+
             }
         })
     }

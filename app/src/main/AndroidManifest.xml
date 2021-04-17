@@ -30,7 +30,7 @@
         </activity>
 
         <receiver
-            android:name=".work_manager.AlarmReceiver"
+            android:name=".alaram_manager.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
         <!--
@@ -69,7 +69,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.home.HomePageActivity">
+        <activity android:name=".ui.home.HomePageActivity"
+            >
 
         </activity>
         <activity android:name=".MainActivity" />

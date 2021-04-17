@@ -189,6 +189,7 @@ interface TDApi {
         @Field("remarks") remarks:String,
         @Field("purchase_date") purchase_date:String,
         @Field("total_amount") total_amount:String,
+        @Field("due_date") due_date:String,
     ):Response<StatusMessageModel>
 
     @GET("getPendingPaymentList")
@@ -209,6 +210,14 @@ interface TDApi {
         @Field("remarks") remarks:String
 
     ):Response<StatusMessageModel>
+
+    @FormUrlEncoded
+    @POST("updateLogoutTime")
+    suspend fun updateLogoutTime(
+        @Field("emp_id") empId: String,
+        @Field("login_date") login_date:String
+    ):Response<StatusMessageModel>
+
 
 }
 

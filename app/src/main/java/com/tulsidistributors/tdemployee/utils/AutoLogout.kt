@@ -4,16 +4,14 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import com.tulsidistributors.tdemployee.work_manager.AlarmReceiver
+import com.tulsidistributors.tdemployee.alaram_manager.AlarmReceiver
 import java.util.*
 
 class AutoLogout(val context: Context) {
      fun setAlarm() {
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 13)
-        calendar.set(Calendar.MINUTE, 16)
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 13)
         calendar.set(Calendar.SECOND, 0)
 
 
@@ -43,4 +41,6 @@ class AutoLogout(val context: Context) {
         showToast(context, "Alarm is Cancled")
 
     }
+
+
 }

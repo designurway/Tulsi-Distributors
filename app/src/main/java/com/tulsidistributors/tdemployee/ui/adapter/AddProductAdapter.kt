@@ -85,7 +85,6 @@ class AddProductAdapter(
                 position = position,
                 prodactName = productName,
                 prodctQuantity = productQty,
-                productPice = productPrice,
                 brandId = brandId,
                 product_id = productId
             )
@@ -107,7 +106,6 @@ interface AddProductItemClickListner {
         position: Int,
         prodactName: String,
         prodctQuantity: Int,
-        productPice: String,
         brandId: String,
         product_id:String
     )

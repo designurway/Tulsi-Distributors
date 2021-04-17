@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tulsidistributors.tdemployee.R
@@ -46,6 +47,8 @@ class HomeFragment : Fragment(), HomeItemClicked {
         super.onViewCreated(view, savedInstanceState)
 
         mContext = requireContext()
+
+        showToast(mContext,"HomeFragment Called")
 
         userLoginPreferences = UserLoginPreferences(requireActivity().dataStore)
 
@@ -135,4 +138,5 @@ class HomeFragment : Fragment(), HomeItemClicked {
             }
         }
     }
+
 }

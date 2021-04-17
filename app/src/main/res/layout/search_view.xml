@@ -8,6 +8,7 @@
     android:paddingStart="8dp"
     android:drawablePadding="20dp"
     android:background="@color/white"
+    android:drawableTint="@color/grey"
     android:drawableStart="@drawable/ic_search">
 
 </EditText>
