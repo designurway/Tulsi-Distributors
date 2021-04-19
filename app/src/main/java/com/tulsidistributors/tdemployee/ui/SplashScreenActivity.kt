@@ -23,28 +23,16 @@ class SplashScreenActivity : AppCompatActivity() {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        loginPrefrence = UserLoginPreferences(dataStore)
 
-        var title = intent.extras?.getString("Title")
-
-        Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
-
-        if (title != null) {
-            val intent = Intent(this, HomePageActivity::class.java)
-            intent.putExtra("Title",title)
-            startActivity(intent)
-            finish()
-        }else{
-            getUserDetail()
-        }
-
-    }
-
-    private fun getUserDetail() {
-
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(1100)
+                    startActivity(Intent(this@SplashScreenActivity,AuthActivity::class.java))
+                    finish()
+                }
 
 
     }
+
 
 
 
